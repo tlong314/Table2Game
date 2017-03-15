@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Table2Game Demo</title>
+<style>
+
+h1, h2, p {
+	margin: 0;
+	padding: 8px;
+	text-align: center;
+}
+
+h1 {
+	font-size: 28px;
+	background: #ddffdd;
+}
+
+h2 {
+	font-size: 14px;
+	background: #ddddff;
+}
+
+#Table2GameTest {
+	border-collapse: collapse;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	margin: 20px auto;
+}
+
+#Table2GameTest th, #Table2GameTest td {
+	border: 1px solid #ccc;
+	height: 35px;
+	width: 45px;
+	text-align: center;
+}
+
+#Table2GameTest th {
+	padding: 10px;
+}
+
+#Table2GameTest td {
+	padding: 5px;
+}
+</style>
+</head>
+<body>
+<table id="Table2GameTest">
+	<h1>
+		Table2Game
+	</h1>
+	<h2>
+		by Tim Scott Long
+		(<a href="http://www.github.com/tlong314">
+			github.com/tlong314
+		</a>)
+	</h2>
+	<p>
+		Choose a game demo from the dropdown list below the table.
+	</p>
+	<thead>
+		<tr>
+			<th>Reports</th>
+			<th>Lists</th>
+			<th>Make</th>
+			<th>Data</th>
+			<th>Fun</th>
+			<th>And</th>
+			<th>Play</th>
+			<th>Table</th>
+			<th>2</th>
+			<th>Game</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td>#4804</td><td>51, 41</td><td>Rect</td><td>3029</td><td>Test</td><td>3580</td><td>7373</td><td>8773</td><td>5082</td><td>8586</td></tr>
+		<tr><td>#7446</td><td>85, 47</td><td>Square</td><td>5044</td><td>Test</td><td>3765</td><td>1169</td><td>4523</td><td>6617</td><td>3039</td></tr>
+		<tr><td>#1201</td><td>50, 57</td><td>Poly</td><td>5680</td><td>Test</td><td>9870</td><td>8925</td><td>7461</td><td>5611</td><td>5301</td></tr>
+		<tr><td>#2451</td><td>15, 13</td><td>Sprite</td><td>8663</td><td>7237</td><td>5610</td><td>Test</td><td>0255</td><td>7003</td><td>3972</td></tr>
+		<tr><td>#7933</td><td>21, 78</td><td>Rhom</td><td>2088</td><td>9313</td><td>Test</td><td>7557</td><td>Test</td><td>9612</td><td>3796</td></tr>
+		<tr><td>#5472</td><td>13, 38</td><td>Quads</td><td>2671</td><td>6542</td><td>3517</td><td>Test</td><td>8034</td><td>9210</td><td>0801</td></tr>
+	</tbody>
+</table>
+<script src="table2game.js">
+</script>
+<script>
+var tg;
+
+window.onload = function init() {
+	var options = {
+		table: document.getElementById("Table2GameTest")
+	};
+
+	tg = new Table2Game(options);
+
+	tg.addGamesList();
+}
+</script>
+</body>
+</html>
