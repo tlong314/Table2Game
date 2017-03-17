@@ -109,6 +109,7 @@
 		onmouseoverCallback = null,
 		onmouseoutCallback = null,
 		onmousewheelCallback = null,
+		oncontextmenuCallback = null,
 		handlersCreated = {
 			onkeydown: false,
 			onkeyup: false,
@@ -121,15 +122,16 @@
 			onmouseleave: false,
 			onmouseover: false,
 			onmouseout: false,
-			onmousewheel: false
+			onmousewheel: false,
+			oncontextmenu: false
 		};
 
 	// Cross-browser event handling
-	var elmEvent = function(element, evtString, callback, bubbles) {
+	var handleElmEvent = function(element, evtString, callback, bubbling) {
 		if(window.attachEvent) {
 			return element.attachEvent(evtString, callback);
 		} else {
-			return element.attachEvent(evtString, callback, bubbles);
+			return element.addEventListener(evtString, callback, bubbling);
 		}
 	};
 
@@ -239,7 +241,7 @@
 			self.registerSprite(spr, opts.sprites[spr]);
 		}
 
-		detailsDiv = document.createElement("DIV");
+		detailsDiv = document.createElement("div");
 		detailsDiv.id = "Table2GameDetailsDiv";
 		detailsDiv.style.display = "inline block";
 		detailsDiv.color = "#eee";
@@ -263,7 +265,7 @@
 				onkeydownCallback = opts.onkeydown;
 			} else {
 				onkeydownCallback = opts.onkeydown;
-				window.addEventListener("keydown", function(e) { onkeydownCallback.call(self, e); }, false);
+				handleElmEvent(window, "keydown", function(e) { onkeydownCallback.call(self, e); }, false);
 				handlersCreated.onkeydown = true;
 			}
 		} else {
@@ -278,12 +280,14 @@
 				onkeyupCallback = opts.onkeyup;
 			} else {
 				onkeyupCallback = opts.onkeyup;
-				window.addEventListener("keyup", function(e) { onkeyupCallback.call(self, e); }, false);
+				handleElmEvent(window, "keyup", function(e) { onkeyupCallback.call(self, e); }, false);
 				handlersCreated.onkeyup = true;
 			}
 		} else {
-			onkeyupCallback = function() {/* noop */};
-			handlersCreated.onkeyup = false;
+			if(handlersCreated.onkeyup) {
+				onkeyupCallback = function() {/* noop */};
+				handlersCreated.onkeyup = false;
+			}
 		}
 
 		if(opts.onkeypress) {
@@ -291,27 +295,31 @@
 				onkeypressCallback = opts.onkeypress;
 			} else {
 				onkeypressCallback = opts.onkeypress;
-				window.addEventListener("keypress", function(e) { onkeypressCallback.call(self, e); }, false);
+				handleElmEvent(window, "keypress", function(e) { onkeypressCallback.call(self, e); }, false);
 				handlersCreated.onkeypress = true;
 			}
 		} else {
-			onkeypressCallback = function() {/* noop */};
-			handlersCreated.onkeypress = false;
+			if(handlersCreated.onkeypress) {
+				onkeypressCallback = function() {/* noop */};
+				handlersCreated.onkeypress = false;
+			}
 		}
-
+		
 		if(opts.onclick) {
 			if(onclickCallback) {
 				onclickCallback = opts.onclick;
 			} else {
 				onclickCallback = opts.onclick;
-				window.addEventListener("click", function(e) { onclickCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "click", function(e) { onclickCallback.call(self, e); }, false);
 				handlersCreated.onclick = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onclickCallback = function() {/* noop */};
-			handlersCreated.onclick = false;
+			if(handlersCreated.onclick) {
+				onclickCallback = function() {/* noop */};
+				handlersCreated.onclick = false;
+			}
 		}
 
 		if(opts.onmousedown) {
@@ -319,14 +327,16 @@
 				onmousedownCallback = opts.onmousedown;
 			} else {
 				onmousedownCallback = opts.onmousedown;
-				window.addEventListener("mousedown", function(e) { onmousedownCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mousedown", function(e) { onmousedownCallback.call(self, e); }, false);
 				handlersCreated.onmousedown = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmousedownCallback = function() {/* noop */};
-			handlersCreated.onmousedown = false;
+			if(handlersCreated.onmousedown) {
+				onmousedownCallback = function() {/* noop */};
+				handlersCreated.onmousedown = false;
+			}
 		}
 		
 		if(opts.onmouseup) {
@@ -334,14 +344,16 @@
 				onmouseupCallback = opts.onmouseup;
 			} else {
 				onmouseupCallback = opts.onmouseup;
-				window.addEventListener("mouseup", function(e) { onmouseupCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mouseup", function(e) { onmouseupCallback.call(self, e); }, false);
 				handlersCreated.onmouseup = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmouseupCallback = function() {/* noop */};
-			handlersCreated.onmouseup = false;
+			if(handlersCreated.onmouseup) {
+				onmouseupCallback = function() {/* noop */};
+				handlersCreated.onmouseup = false;
+			}
 		}
 
 		if(opts.onmousemove) {
@@ -349,14 +361,16 @@
 				onmousemoveCallback = opts.onmousemove;
 			} else {
 				onmousemoveCallback = opts.onmousemove;
-				window.addEventListener("mousemove", function(e) { onmousemoveCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mousemove", function(e) { onmousemoveCallback.call(self, e); }, false);
 				handlersCreated.onmousemove = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmousemoveCallback = function() {/* noop */};
-			handlersCreated.onmousemove = false;
+			if(handlersCreated.onmousemove) {
+				onmousemoveCallback = function() {/* noop */};
+				handlersCreated.onmousemove = false;
+			}
 		}
 
 		if(opts.onmouseenter) {
@@ -364,14 +378,16 @@
 				onmouseenterCallback = opts.onmouseenter;
 			} else {
 				onmouseenterCallback = opts.onmouseenter;
-				window.addEventListener("mouseenter", function(e) { onmouseenterCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mouseenter", function(e) { onmouseenterCallback.call(self, e); }, false);
 				handlersCreated.onmouseenter = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmouseenterCallback = function() {/* noop */};
-			handlersCreated.onmouseenter = false;
+			if(handlersCreated.onmouseenter) {
+				onmouseenterCallback = function() {/* noop */};
+				handlersCreated.onmouseenter = false;
+			}
 		}
 
 		if(opts.onmouseleave) {
@@ -379,14 +395,16 @@
 				onmouseleaveCallback = opts.onmouseleave;
 			} else {
 				onmouseleaveCallback = opts.onmouseleave;
-				window.addEventListener("mouseleave", function(e) { onmouseleaveCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mouseleave", function(e) { onmouseleaveCallback.call(self, e); }, false);
 				handlersCreated.onmouseleave = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmouseleaveCallback = function() {/* noop */};
-			handlersCreated.onmouseleave = false;
+			if(handlersCreated.onmouseleave) {
+				onmouseleaveCallback = function() {/* noop */};
+				handlersCreated.onmouseleave = false;
+			}
 		}
 
 		if(opts.onmouseover) {
@@ -394,14 +412,16 @@
 				onmouseoverCallback = opts.onmouseover;
 			} else {
 				onmouseoverCallback = opts.onmouseover;
-				window.addEventListener("mouseover", function(e) { onmouseoverCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mouseover", function(e) { onmouseoverCallback.call(self, e); }, false);
 				handlersCreated.onmouseover = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmouseoverCallback = function() {/* noop */};
-			handlersCreated.onmouseover = false;
+			if(handlersCreated.onmouseover) {
+				onmouseoverCallback = function() {/* noop */};
+				handlersCreated.onmouseover = false;
+			}
 		}
 
 		if(opts.onmouseout) {
@@ -409,14 +429,16 @@
 				onmouseoutCallback = opts.onmouseout;
 			} else {
 				onmouseoutCallback = opts.onmouseout;
-				window.addEventListener("mouseout", function(e) { onmouseoutCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mouseout", function(e) { onmouseoutCallback.call(self, e); }, false);
 				handlersCreated.onmouseout = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmouseoutCallback = function() {/* noop */};
-			handlersCreated.onmouseout = false;
+			if(handlersCreated.onmouseout) {
+				onmouseoutCallback = function() {/* noop */};
+				handlersCreated.onmouseout = false;
+			}
 		}
 
 		if(opts.onmousewheel) {
@@ -424,14 +446,33 @@
 				onmousewheelCallback = opts.onmousewheel;
 			} else {
 				onmousewheelCallback = opts.onmousewheel;
-				window.addEventListener("mousewheel", function(e) { onmousewheelCallback.call(self, e); }, false);
+				handleElmEvent(self.table, "mousewheel", function(e) { onmousewheelCallback.call(self, e); }, false);
 				handlersCreated.onmousewheel = true;
 			}
 
 			table.style.cursor = "default";
 		} else {
-			onmousewheelCallback = function() {/* noop */};
-			handlersCreated.onmousewheel = false;
+			if(handlersCreated.onmousewheel) {
+				onmousewheelCallback = function() {/* noop */};
+				handlersCreated.onmousewheel = false;
+			}
+		}
+
+		if(opts.oncontextmenu) {
+			if(oncontextmenuCallback) {
+				oncontextmenuCallback = opts.oncontextmenu;
+			} else {
+				oncontextmenuCallback = opts.oncontextmenu;
+				handleElmEvent(self.table, "contextmenu", function(e) { oncontextmenuCallback.call(self, e); }, false);
+				handlersCreated.oncontextmenu = true;
+			}
+
+			table.style.cursor = "default";
+		} else {
+			if(handlersCreated.oncontextmenu) {
+				oncontextmenuCallback = function() {/* noop */};
+				handlersCreated.oncontextmenu = false;
+			}
 		}
 
 		delay = opts.delay || delay;
@@ -1121,13 +1162,13 @@
 	 * @param detail The name of the specific detail. If none is provided, the entire details <div> element is returned.
 	 * @returns {Object}
 	 */
-	Table2Game.prototype.getDetailsSpan = function(detail) {
+	Table2Game.prototype.getDetailsElement = function(detail) {
 		if(detail) {
 			return document.getElementById("Table2Game" + detail + "Span").innerHTML;
 		} else {
 			return this.detailsDiv;
 		}
-	}; // End getDetailsSpan()
+	}; // End getDetailsElement()
 
 	/**
 	 * @description Gets the closest <td> or <th> ancestor element of an mouse event target.
@@ -1805,18 +1846,43 @@
 	demoGamesOpts["Paint"].init = function() {
 		var self = this,
 			colorInput = document.createElement("input"),
-			table = this.getTable();
+			colorElm = document.createElement("div"),
+			table = self.getTable();
 
 		colorInput.type = "color";
-		this.registerGlobal("paintedCount", 0);
+		self.registerGlobal("paintedCount", 0);
 
+		colorInput.style.marginLeft = self.table.style.marginLeft ||
+			(window.getComputedStyle ? window.getComputedStyle(self.table).getPropertyValue("margin-left") : "");
+		
 		colorInput.onchange = function(e) {
 			self.setGlobal("storedColor", this.value);
 		};
 
-		table.parentNode.insertBefore(colorInput, table.nextSibling);
-		this.registerGlobal("colorInput", colorInput);
-		this.registerGlobal("storedColor", "#000000");
+		 var detailsElm = this.getDetailsElement();
+
+		table.style.marginBottom = "0";
+		colorElm.appendChild(colorInput);
+		table.parentNode.insertBefore(colorElm, table.nextSibling);
+		self.registerGlobal("colorInput", colorInput)
+			.registerGlobal("colorElm", colorElm)
+			.registerGlobal("storedColor", "#000000")
+			.registerGlobal("overTable", false)
+			.registerGlobal("overColorElm", false);
+
+		// We'll pause to hide, when the mouse leaves both the table and color input
+		handleElmEvent(colorElm, "mouseleave", function(){
+			self.setGlobal("overColorElm", false);
+
+			if(!self.getGlobals("overTable")) {
+				self.pause();
+			}
+		}, false);
+
+		handleElmEvent(colorElm, "mouseenter", function(){
+			self.setGlobal("overColorElm", true);
+			self.unpause();
+		}, false);
 	};
 
 	demoGamesOpts["Paint"].onpause = function() {
@@ -1828,21 +1894,22 @@
 	};
 
 	demoGamesOpts["Paint"].onmouseleave = function(e) {
-		this.pause();
+		this.setGlobal("overTable", false);
+
+		if(!self.getGlobals("overColorElm")) {
+			self.pause();
+		}
 	};
 
 	demoGamesOpts["Paint"].onmouseenter = function(e) {
+		this.setGlobal("overTable", true);
 		this.unpause();
 	};
 
-	demoGamesOpts["Paint"].click = function(e) {
+	demoGamesOpts["Paint"].onclick = function(e) {
 		var colorInput = this.getGlobals("colorInput"),
 			cellToPaint = this.closestCell(e.target),
 			paintedCount = this.getGlobals("paintedCount");
-
-		if(e.target === colorInput && cellToPaint.nodeName !== null && cellToPaint.nodeName !== "TABLE") {
-			return;
-		}
 
 		this.registerSprite("paintedCount" + paintedCount, {
 					x: this.cellCoordinates(cellToPaint).x,
@@ -3850,8 +3917,8 @@
 	 */
 	Table2Game.prototype.addGamesList = function(gamesList) {
 		var gamesList = gamesList || {},
-			select = document.createElement("SELECT"),
-			option = document.createElement("OPTION"),
+			select = document.createElement("select"),
+			option = document.createElement("option"),
 			text = document.createTextNode("- Select - "),
 			self = this;
 
@@ -3864,7 +3931,7 @@
 		select.appendChild(option);
 
 		for(var game in gamesList) {	
-			option = document.createElement("OPTION");
+			option = document.createElement("option");
 			text = document.createTextNode(game);
 
 			option.appendChild(text);
