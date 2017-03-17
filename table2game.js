@@ -532,6 +532,8 @@
 		return self;
 	}; // End Table2Game() constructor
 
+	Table2Game.prototype.constructor = Table2Game;
+
 	// Default color collection
 	Table2Game.defaultColor = defaultColor;
 	Table2Game.black = black;
