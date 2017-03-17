@@ -91,6 +91,10 @@ defaultColor {string} - The basic color to be used when none is specified. Defau
 
 Options for 9 other colors follow similarly: white, black, gray, red, green, blue, yellow, purple, and blueGreen.
 
+## Methods
+
+This section is still being updated. For now, please see documentation within the library for various methods and explanations.
+
 ## Demo Games
 
 These are games built into the engine for use and for code examples. Pass any of these strings into the Table2Game constructor (and a second argument for the options, to point to your table) and you can play the game.
