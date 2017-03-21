@@ -55,7 +55,7 @@ onunpause {function} - Any extra code that should be executed when the `.unpause
 
 onpaint {function} - Any etxra code that should be executed whenever the game canvas (table) is painted.
 
-Each of the callback functions defined as options below represent the similarly named event handler callback as defined on the table (for mouse events) or window (for key events), passing in a parameter describing the event. For ease of reference within the library, each of these is invoked with the `this` keyword now representing the Table2Game object (rather than the element that triggered the event, as that element can be accessed as `.target` on the passed event).
+Each of the callback functions defined as options below represents the similarly named event handler callback as defined on the table (for mouse events and touch events) or window (for key events), and passes in a parameter describing the event. For ease of reference within the library, each of these is invoked with the `this` keyword now representing the Table2Game object (rather than the element that triggered the event, as that element can be accessed as `.target` on the passed event).
 
 onkeydown
 
@@ -82,6 +82,12 @@ onmouseout
 onmousewheel
 
 oncontextmenu
+
+ontouchstart
+
+ontouchmove
+
+ontouchend
 
 delay {number} - The number of milliseconds between update cycles. Default is `50`.
 
