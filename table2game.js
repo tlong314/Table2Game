@@ -124,16 +124,41 @@
 			onmouseout: false,
 			onmousewheel: false,
 			oncontextmenu: false
-		};
+		},
+		tableFound = false;
 
-	// Cross-browser event handling
+	/**
+	 * @description Binds cross-browser event listener.
+	 * @param {Object} element The HTML element the event will be handled for.
+	 * @param {string} evtString The standard name of the event
+	 * @param {function} callback The handler function to be called.
+	 * @param {boolean} bubbling Whether or not the event should bubble.
+	 * @private
+	 */
 	var handleElmEvent = function(element, evtString, callback, bubbling) {
 		if(window.attachEvent) {
 			return element.attachEvent(evtString, callback);
 		} else {
 			return element.addEventListener(evtString, callback, bubbling);
 		}
-	};
+	}; // End handleElmEvent()
+
+	/**
+	 * @description Removes cross-browser event listener. Paramaters are same used in handleElmEvent
+	 *   to bind the listener.
+	 * @param {Object} element The HTML element the event will be handled for.
+	 * @param {string} evtString The standard name of the event
+	 * @param {function} callback The handler function to be called.
+	 * @param {boolean} bubbling Whether or not the event should bubble.
+	 * @private
+	 */
+	var unhandleElmEvent = function(element, evtString, callback, bubbling) {
+		if(window.detachEvent) {
+			return element.detachEvent(evtString, callback);
+		} else {
+			return element.removeEventListener(evtString, callback, bubbling);
+		}
+	}; // End unhandleElmEvent()
 
 	/**
 	 * @description Constructor function for Table2Game objects.
@@ -149,6 +174,7 @@
 	 * @param {function} [onpaint] A callback to be called after each time the game screen is redrawn.
 	 * @param {number} [opts.delay] The number of milliseconds to wait before each game update.
 	 * @param {boolean} [opts.hideOnPause] Whether the game screen should be cleared when the game is paused. Defaults to true.
+	 * @param {number} [opts.initialDelay] Time in milliseconds to wait before first screen paint (e.g., title screen) and game start.
 	 * @param {string} [opts.defaultColor] The default color to use for drawing Sprites.
 	 * @param {string} [opts.white] A color to be used for the lightest objects.
 	 * @param {string} [opts.black] A color to be used for the darkest objects.
@@ -526,9 +552,14 @@
 		unpauseCallback = opts.onunpause;
 		onpaintCallback = opts.onpaint;
 
-		opts.init.call(self);
-		timer = setInterval(updateForTimer, delay);
-		
+		opts.init.call(self); // Call init() function immediately
+		self.paint(); // Draw intro screen immediately after init()
+
+		// Optionally, wait before beginning animation - gives user time to adjust.
+		setTimeout(function() {
+			timer = setInterval(updateForTimer, delay);
+		}, opts.initialDelay || 20);
+
 		return self;
 	}; // End Table2Game() constructor
 
@@ -1909,6 +1940,14 @@
 	};
 
 	demoGamesOpts["Paint"].onclick = function(e) {
+		paintCell.call(this, e);
+	};
+
+	demoGamesOpts["Paint"].onmousedrag = function(e) {
+		paintCell.call(this, e);
+	};
+
+	var paintCell = function(e) {
 		var colorInput = this.getGlobals("colorInput"),
 			cellToPaint = this.closestCell(e.target),
 			paintedCount = this.getGlobals("paintedCount");
@@ -1923,7 +1962,7 @@
 
 		this.setGlobal("paintedCount", (paintedCount + 1));
 	};
-
+	
 	///////////////////////////////////////////////////
 	/* Maze */
 
@@ -2835,8 +2874,8 @@
 	///////////////////////////////////////////////////
 	/* Dungeon  */
 
-	var dungeDoorColor = "#333", //  Table2Game.black,
-		dungeHoleColor = "#000", // Table2Game.black,
+	var dungeDoorColor = "#333",
+		dungeHoleColor = "#000",
 		dungeBlockColor = Table2Game.gray,
 		dungePushTime = {
 			left: 0,
@@ -2851,6 +2890,7 @@
 		var roomCoords = {x: 1, y: 3};
 		this.registerGlobal("roomCoords", roomCoords);
 
+		this.registerGlobal("startingColor", "#ddd");
 		this.registerGlobal("roomTimeCount", 0);
 		this.registerGlobal("gameOver", false);
 		this.registerGlobal("hasKey", false);
@@ -2866,7 +2906,7 @@
 				y: 0
 			}
 		});
-					
+
 		this.registerGlobal("doorCoords", {
 			left: {
 				x: 0,
@@ -2885,12 +2925,13 @@
 				y: Math.floor(this.screenHeight / 2)
 			}
 		});
-		
+
 		this.registerSprite("player", {
 			x: Math.floor(this.screenWidth / 2),
 			y: Math.ceil(this.screenHeight / 2),
 			width: 1,
-			height: 1
+			height: 1,
+			color: "#ddd"
 		});
 		
 		this.registerSprite("topWall", {
@@ -2944,7 +2985,7 @@
 				if(keyHole && hasKey && this.collidingFromBelow(player, keyHole)) {
 					this.unregisterSprite("keyhole");
 					player.y--;
-					player.color = "defaultColor";
+					player.color = this.getGlobals("startingColor");
 				}
 
 				if(blockWall && this.collidingFromBelow(player, blockWall)) {
@@ -3412,27 +3453,26 @@
 						break;
 						case 4:
 							drawDungeonDoors.call(this, "bottom", "top");
-							this.registerSprite("enemy0", {
+
+							var holesY = 2;
+
+							this.registerSprite("enemy" + holesY, {
 								x: Math.floor(this.screenWidth / 2),
-								y: 2,
-								color: dungeHoleColor
-							}).registerSprite("enemy1", {
-								x: Math.floor(this.screenWidth / 2) - 1,
-								y: 3,
-								color: dungeHoleColor
-							}).registerSprite("enemy2", {
-								x: Math.floor(this.screenWidth / 2)  + 1,
-								y: 3,
-								color: dungeHoleColor
-							}).registerSprite("enemy3", {
-								x: Math.floor(this.screenWidth / 2) - 2,
-								y: 4,
-								color: dungeHoleColor
-							}).registerSprite("enemy4", {
-								x: Math.floor(this.screenWidth / 2) + 2,
-								y: 4,
+								y: holesY,
 								color: dungeHoleColor
 							});
+
+							while(holesY++ < this.screenHeight - 3) {
+								this.registerSprite("enemy" + holesY, {
+									x: Math.floor(this.screenWidth / 2) - (holesY - 2),
+									y: holesY,
+									color: dungeHoleColor
+								}).registerSprite("enemy" + holesY + "B", {
+									x: Math.floor(this.screenWidth / 2)  + (holesY - 2),
+									y: holesY,
+									color: dungeHoleColor
+								});
+							}
 						break;
 						default: {}
 					}
@@ -3824,7 +3864,7 @@
 
 		player.x = Math.floor(this.screenWidth / 2);
 		player.y = Math.ceil(this.screenHeight / 2);
-		player.color = this.defaultColor;
+		player.color = this.getGlobals("startingColor");
 
 		drawDungeonRoom.call(this, {x: 1, y: 3});
 	}
@@ -3957,6 +3997,45 @@
 
 		return this;
 	}; // End Table2Game.prototype.addGamesList()
+
+	/**
+	 * @description Returns the first ancestory of the given element that is a <table> element.
+	 * @param {Object} elm The HTML element being changed.
+	 * @returns {Object} The found table or null if no ancestor is a table.
+	 */
+	Table2Game.closestTable = function(elm) {
+		while(elm && elm.nodeName !== "TABLE") {
+			elm = elm.parentNode;
+		}
+
+		return elm;
+	}; // End Table2Game.closestTable()
+
+	/**
+	 * @description Creates handlers allowing user to decide which table to use by clicking on it.
+	 */
+	Table2Game.clickToChoose = function() {
+		var tables = document.getElementsByTagName("table");
+
+		handleElmEvent(window, "click", createTableOnClick, false);
+	}; // End Table2Game.clickToChoose()
+
+	/**
+	 * @description Creates a Table2Game object from a clicked table.
+	 * @param {Object} e The click event that triggered the callback.
+	 * @private
+	 */
+	var createTableOnClick = function(e) {
+		if(!tableFound) {
+			var tg = new Table2Game({
+				table: Table2Game.closestTable(e.target)
+			});
+
+			tg.addGamesList();
+			tableFound = true;
+			unhandleElmEvent(window, "click", createTableOnClick, false);
+		}
+	}; // End createTableOnClick()
 
 	// Expose the Table2Game constructor and static variables.
 	return Table2Game;
