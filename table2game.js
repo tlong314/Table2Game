@@ -110,6 +110,9 @@
 		onmouseoutCallback = null,
 		onmousewheelCallback = null,
 		oncontextmenuCallback = null,
+		ontouchstartCallback = null,
+		ontouchmoveCallback = null,
+		ontouchendCallback = null,
 		handlersCreated = {
 			onkeydown: false,
 			onkeyup: false,
@@ -123,7 +126,10 @@
 			onmouseover: false,
 			onmouseout: false,
 			onmousewheel: false,
-			oncontextmenu: false
+			oncontextmenu: false,
+			touchstart: false,
+			touchmove: false,
+			touchend: false
 		},
 		tableFound = false;
 
@@ -498,6 +504,51 @@
 			if(handlersCreated.oncontextmenu) {
 				oncontextmenuCallback = function() {/* noop */};
 				handlersCreated.oncontextmenu = false;
+			}
+		}
+
+		if(opts.ontouchstart) {
+			if(ontouchstartCallback) {
+				ontouchstartCallback = opts.ontouchstart;
+			} else {
+				ontouchstartCallback = opts.ontouchstart;
+				handleElmEvent(self.table, "touchstart", function(e) { ontouchstartCallback.call(self, e); }, false);
+				handlersCreated.ontouchstart = true;
+			}
+		} else {
+			if(handlersCreated.ontouchstart) {
+				ontouchstartCallback = function() {/* noop */};
+				handlersCreated.ontouchstart = false;
+			}
+		}
+
+		if(opts.ontouchmove) {
+			if(ontouchmoveCallback) {
+				ontouchmoveCallback = opts.ontouchmove;
+			} else {
+				ontouchmoveCallback = opts.ontouchmove;
+				handleElmEvent(self.table, "touchmove", function(e) { ontouchmoveCallback.call(self, e); }, false);
+				handlersCreated.ontouchmove = true;
+			}
+		} else {
+			if(handlersCreated.ontouchmove) {
+				ontouchmoveCallback = function() {/* noop */};
+				handlersCreated.ontouchmove = false;
+			}
+		}
+
+		if(opts.ontouchend) {
+			if(ontouchendCallback) {
+				ontouchendCallback = opts.ontouchend;
+			} else {
+				ontouchendCallback = opts.ontouchend;
+				handleElmEvent(self.table, "touchend", function(e) { ontouchendCallback.call(self, e); }, false);
+				handlersCreated.ontouchend = true;
+			}
+		} else {
+			if(handlersCreated.ontouchend) {
+				ontouchendCallback = function() {/* noop */};
+				handlersCreated.ontouchend = false;
 			}
 		}
 
