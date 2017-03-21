@@ -101,6 +101,110 @@ Options for 9 other colors follow similarly: white, black, gray, red, green, blu
 
 This section is still being updated. For now, please see documentation within the library for various methods and explanations.
 
+We will use an example Table2Game object, named `tg` to describe the public methods.
+
+`var tg = new Table2Game();`
+
+`tg.constructor(optionsOrDemoGameName, demoGameOptions)`
+
+A pointer to the Table2Game constructor method.
+
+`tg.colliding(x1, y1, w1, h1, x2, y2, w2, h2)`
+
+Accepts the x-y coordinates, width, and height of two Sprite objects, or simply the two Sprite objects themselves.
+
+`tg.collidingFromAbove(obj1, obj2)`
+
+returns true if Sprite object obj1 is colliding into Sprite object obj2 from above. The next three methods are similar.
+
+`tg.collidingFromBelow(obj1, obj2)`
+
+`tg.collidingFromLeft(obj1, obj2)`
+
+`tg.collidingFromRight(obj1, obj2)`
+
+`tg.collidingPolygons(obj1, obj2)`
+
+Detects whether two Sprites objects, both with their shapes defined by a `polygon` property, are colliding.
+
+`tg.touching(obj1, obj2, includeCorners)`
+
+Determines if two objects `obj1` and `obj2` are colliding from any side (or any corners if the `includeCorners` parameter is true).
+
+`tg.closestCell(target)`
+
+Returns the closest ancestor of the `target` element (of, say, a mouse click) that is a table cell.
+
+`tg.cellCoordinates(cell)`
+
+Returns the x and y values (within the table game canvas) of the table cell `cell`.
+
+`tg.clear()`
+
+Erases current game canvas.
+
+`tg.paint()`
+
+Paints all of the currently registered Sprite objects onto the game canvas (and invokes the onpaint() callback if one was created.
+
+`tg.fillPolygon(polygon, color)`
+
+Paints a given Sprite polygon `polygon` to the game canvas (with the color defined by the `color` parameter, for any part of the polygon that has not already defined one).
+
+`tg.fillRect(x, y, width, height, color)`
+
+Fills a rectangular area to the game canvas, with top left corner defined by `x` and `y`, width and height defined by `width` and `height`, and shaded with the optional `color` paramater (or else with Table2Game.defaultColor).
+
+`tg.moveToTop(sprite)`
+
+Moves Sprite object `sprite` so that it is drawn to the screen after all other sprites.
+
+`tg.flashEnding(numFlashes, delayStep, callback)`
+
+Creates a temporary flash effect, used to indicate a major event, such as a game ending. All parameters are optional - `numFlashes` will determine the number of total flashes, `delayStep` will determine how long the animation delay is for the flashes, and `callback` is a function to be called once the flashes complete.
+
+`tg.pause()`
+
+Pauses the game (and hides the game Sprites and scoreboard if the hideOnPause option was set to true in the constructor).
+
+`tg.unpause()`
+
+Unpauses the game (and unhides the game Sprites and scoreboard if the hideOnPause option was set to true in the constructor).
+
+`tg.isPaused()`
+
+Returns true if the game is currently paused.
+
+`tg.onpause()`
+
+Calls the onpause callback defined in the constructor.
+
+`tg.onunpause()`
+
+Calls the onunpause callback defined in the constructor.
+
+`tg.onpaint()`
+
+Calls the onpaint callback defined in the constructor.
+
+`tg.getDetails`
+
+Returns the details variables (used on the scoreboard).
+
+`tg.setDetails(detail, val)`
+
+Either sets a single detail (scoreboard variable) if `detail` is the variable name and `val` is the value to set it to, or sets multiple detail values if `detail` is a plain JavaScript object with detail names pointing to their new values.
+
+`tg.getDetailsElement()`
+
+Returns the HTML element used to display the details (scoreboard variables).
+
+`tg.addGamesList(gamesList)`
+
+Creates a `<select>` element after the table, containing names of games to choose from, based on the gamesList parameter, which is a plain JavaScript object of game names pointing to their Table2Game constructor options.
+
+Again, this section is still being updated. There are a few more methods that need to be included.
+
 ## Demo Games
 
 These are games built into the engine for use and for code examples. Pass any of these strings into the Table2Game constructor (and a second argument for the options, to point to your table) and you can play the game.
