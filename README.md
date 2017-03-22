@@ -39,7 +39,7 @@ table {Object} - The HTML `<table>` element to be used as the game canvas. Defau
 
 globals {Object} - A plain JavaScript object defining internal 'global' variables to be used throughout the game. Properties can have any value, and the keys should represent distinct names for the variables. These variables can also be set later with Table2Game methods. Default is `{}`.
 
-sprites {Object} - A plain JavaScript object defining internal 'Sprite' variables to be used throughout the game. Properties will be internal `Sprite` objects (see `registerSprite` method), and the keys should represent distinct names for the Sprites. These Sprites can also be set later with Table2Game methods. Default is `{}`.
+sprites {Object} - A plain JavaScript object defining internal 'Sprite' variables to be used throughout the game. Properties will be internal `Sprite` objects (see `registerSprites` method), and the keys should represent distinct names for the Sprites. These Sprites can also be set later with Table2Game methods. Default is `{}`.
 
 details {Object} - A plain JavaScript object describing variables that shouldNu be displayed on the 'scoreboard', such as `score` and `lives`. These variables can also be set later with Table2Game methods. Default is `{}`.
 
@@ -109,17 +109,17 @@ A pointer to the Table2Game constructor method. If creating a new game, this Tab
 
 The most important public methods relate to the three stored collections of variables: `globals`, which stores internal variables of any type to be used in the game logic; `details`, which stores variables that will be displayed on the table's visible scoreboard area; `sprites`, which stores Sprite objects, which represent objects drawn to the table game canvas.
 
-`tg.registerGlobal(name, value)`
+`tg.registerGlobals(name, value)`
 
-Adds a new object or primitive variable to the current `globals` collection, under the name defined by the string parameter `name` and with the value defined by `value` (which can be any value).
+If `name` is a string, this method adds a new object or primitive variable to the current `globals` collection, under the name defined by the string parameter `name` and with the value defined by `value` (which can be any value). You can register multiple variables at once, by sending in a single parameter as a plain JavaScript object with keys representing the variable names an values representing the values these variables should be set to.
 
-`tg.unregisterGlobal(name)`
+`tg.unregisterGlobals(name)`
 
-Removes the item stored in the current `globals` collection under the name `name`.
+Removes the item stored in the current `globals` collection under the name `name`. This method accepts any nonzero number of arguments, so you can unregister multiple items at once.
 
-`tg.setGlobal(name, val)`
+`tg.setGlobals(nameOrObj, val)`
 
-Sets the value of the item with name `name` in the `globals` collection to the value defined by `val` (can be any value).
+Sets the value of the item with name `nameOrObj` in the `globals` collection to the value defined by `val` (can be any value). If you want to update multiple items at once, send in a single argument as a plain JavaScript object, with keys representing the names of the items to be updated, and values representing the values they should be changed to.
 
 `tg.getDetails()`
 
@@ -133,9 +133,9 @@ Either sets a single detail (scoreboard variable) if `detail` is the variable na
 
 Returns the HTML element used to display the details (scoreboard variables).
 
-`tg.registerSprite(name, opts)`
+`tg.registerSprites(nameOrObj, opts)`
 
-Adds a new Sprite object to the current `sprites` collection ('registers' the Sprite), under the name defined in the string parameter `name`. You should use a unique name for any new Sprite (otherwise any Sprite with the same name will be overwritten). The `opts` parameter is a plain JavaScript object with values defining the Sprite's position, size, shape, and velocity.
+If `nameOrObj` is a string, this method adds a new Sprite object to the current `sprites` collection ('registers' the Sprite), under the name defined by `nameOrObj`. You should use a unique name for any new Sprite (otherwise any Sprite with the same name will be overwritten). The `opts` parameter is a plain JavaScript object with values defining the Sprite's position, size, shape, and velocity.
 
 * `x` - The x-value of the top left corner of the Sprite. Default is 0.
 * `y` - The y-value of the top left corner of the Sprite. Default is 0.
@@ -146,9 +146,11 @@ Adds a new Sprite object to the current `sprites` collection ('registers' the Sp
 * `color` - The color to draw the Sprite's cells. Default is Table2Game.defaultColor.
 * `polygon` - An array containing multiple Sprites to be used to draw the object. If this option is present and a nonempty array, then this array is used to draw the entire object, overriding all of the other options.
 
-`tg.unregisterSprite(name)`
+If you want to register multiple Sprite objects at once, send in a single parameter, a JavaScript object with keys representing the new Sprite names and values representing the Sprite constructor options (as defined above) corresponding to the Sprite with the given name.
 
-Removes the Sprite object stored in the `sprites` collection under the name `name` (so this Sprite will no longer be painted to the screen).
+`tg.unregisterSprites(name)`
+
+Removes the Sprite object stored in the `sprites` collection under the name `name` (so this Sprite will no longer be painted to the screen). This method accepts any number of nonzero arguments, so you can unregister multiple Sprites at once.
 
 `tg.getSprites()`
 
@@ -156,11 +158,11 @@ Returns a plain JavaScript object containing keys as names of all currently regi
 
 `tg.colliding(x1, y1, w1, h1, x2, y2, w2, h2)`
 
-Accepts the x-y coordinates, width, and height of two Sprite objects, or simply the two Sprite objects themselves.
+Determines if two Sprite objects are colliding and returns a boolean. Accepts the x-y coordinates, width, and height of two Sprite objects, or simply the two Sprite objects themselves.
 
 `tg.collidingFromAbove(obj1, obj2)`
 
-returns true if Sprite object obj1 is colliding into Sprite object obj2 from above. The next three methods are similar.
+Returns true if Sprite object obj1 is colliding into Sprite object obj2 from above. The next three methods are similar.
 
 `tg.collidingFromBelow(obj1, obj2)`
 
