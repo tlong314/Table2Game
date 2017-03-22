@@ -99,8 +99,6 @@ Options for 9 other colors follow similarly: white, black, gray, red, green, blu
 
 ## Methods
 
-This section is still being updated. For now, please see documentation within the library for various methods and explanations.
-
 We will use an example Table2Game object, named `tg` to describe the public methods.
 
 `var tg = new Table2Game();`
@@ -108,6 +106,53 @@ We will use an example Table2Game object, named `tg` to describe the public meth
 `tg.constructor(optionsOrDemoGameName, demoGameOptions)`
 
 A pointer to the Table2Game constructor method.
+
+The most important public methods relate to the three stored collections of variables: `globals`, which stores internal variables of any type to be used in the game logic; `details`, which stores variables that will be displayed on the table's visible scoreboard area; `sprites`, which stores Sprite objects, which represent objects drawn to the table game canvas.
+
+`tg.registerGlobal(name, value)`
+
+Adds a new object or primitive variable to the current `globals` collection, under the name defined by the string parameter `name` and with the value defined by `value` (which can be any value).
+
+`tg.unregisterGlobal(name)`
+
+Removes the item stored in the current `globals` collection under the name `name`.
+
+`tg.setGlobal(name, val)`
+
+Sets the value of the item with name `name` in the `globals` collection to the value defined by `val` (can be any value).
+
+`tg.getDetails()`
+
+Returns the details variables (used on the scoreboard).
+
+`tg.setDetails(detail, val)`
+
+Either sets a single detail (scoreboard variable) if `detail` is the variable name and `val` is the value to set it to, or sets multiple detail values if `detail` is a plain JavaScript object with detail names pointing to their new values.
+
+`tg.getDetailsElement()`
+
+Returns the HTML element used to display the details (scoreboard variables).
+
+`tg.registerSprite(name, opts)`
+
+Adds a new Sprite object to the current `sprites` collection ('registers' the Sprite), under the name defined in the string parameter `name`. You should use a unique name for any new Sprite (otherwise any Sprite with the same name will be overwritten). The `opts` parameter is a plain JavaScript object with values defining the sprite's position, size, shape, and velocity.
+
+`x` - The x-value of the top left corner of the Sprite. Default is 0.
+`y` - The y-value of the top left corner of the Sprite. Default is 0.
+`velocityX` - The Sprite's initial horizontal velocity. Default is 0.
+`velocityY` - The Sprite's initial vertical velocity. Default is 0.
+`width` - The number of table cells that the Sprite spans horizontally. Default is 1.
+`height` - The number of table cells that the Sprite spans vertically. Default is 1.
+`color` - The color to draw the Sprites cells. Default is Table2Game.defaultColor.
+`polygon` - An array containing multiple Sprites to be used to draw the object. If this option is present and a nonempty array, then this array is used to draw the entire object, overriding all of the other options.
+
+`tg.unregisterSprite(name)`
+
+Removes the Sprite object stored in the `sprites` collection under the name `name` (so this Sprite will no longer be painted to the screen).
+
+`tg.getSprites()`
+
+Returns a plain JavaScript object containing keys as names of all currently registered Sprite objects pointing to values that are the Sprite objects themselves.
 
 `tg.colliding(x1, y1, w1, h1, x2, y2, w2, h2)`
 
@@ -135,13 +180,21 @@ Determines if two objects `obj1` and `obj2` are colliding from any side (or any 
 
 Returns the closest ancestor of the `target` element (of, say, a mouse click) that is a table cell.
 
-`tg.cellCoordinates(cell)`
+`tg.getCellCoords(cell)`
 
-Returns the x and y values (within the table game canvas) of the table cell `cell`.
+Returns and object with two keys: `x` with a value of the x-value (in the table game canvas) of the table cell `cell`, and `y` with a value of the x-value (in the table game canvas) of the table cell `cell`.
 
 `tg.getCellAt(x, y)`
 
 Returns the table cell element at the x-y point (`x`, `y`) in the table game canvas.
+
+`tg.getTable()`
+
+Returns the HTML `<table>` element being used for the current Table2Game object.
+
+`tg.getTableArr()`
+
+Returns an array of table cells from the HTML `<table>` element being used for the current Table2Game object.
 
 `tg.clear()`
 
@@ -198,18 +251,6 @@ Returns the game update delay (in milliseconds).
 `tg.setDelay(newDelay)`
 
 Sets the game update delay to `newDelay` milliseconds.
-
-`tg.getDetails()`
-
-Returns the details variables (used on the scoreboard).
-
-`tg.setDetails(detail, val)`
-
-Either sets a single detail (scoreboard variable) if `detail` is the variable name and `val` is the value to set it to, or sets multiple detail values if `detail` is a plain JavaScript object with detail names pointing to their new values.
-
-`tg.getDetailsElement()`
-
-Returns the HTML element used to display the details (scoreboard variables).
 
 `tg.addGamesList(gamesList)`
 
