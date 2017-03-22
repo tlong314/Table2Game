@@ -266,11 +266,11 @@
 		self.table = table;
 
 		for(var glob in opts.globals) {
-			self.registerGlobal(glob, opts.globals[glob]);
+			self.registerGlobals(glob, opts.globals[glob]);
 		}
 
 		for(var spr in opts.sprites) {
-			self.registerSprite(spr, opts.sprites[spr]);
+			self.registerSprites(spr, opts.sprites[spr]);
 		}
 
 		detailsDiv = document.createElement("div");
@@ -753,26 +753,48 @@
 
 	/**
 	 * @description Adds a Sprite object to the current game.
-	 * @param {string|Object} nameOrSprite The Sprite object or name of the Sprite object being added.
+	 * @param {string|Object} nameOrObj The name of the Sprite object being added, or a
+	 *   plain JavaScript object defining multiple Sprite objects to add - keys represent the new
+	 *   Sprite object names and values represent the constructor options for the Sprite objects themselves.
 	 * @returns {Object} The current Table2Game object.
 	 */
-	Table2Game.prototype.registerSprite = function(name, opts) {
-		opts = opts || {};
-		opts.name = name;
-		sprites[name] = new Sprite(opts);
+	Table2Game.prototype.registerSprites = function(nameOrObj, opts) {
+		if(typeof nameOrObj === "string") {
+			opts = opts || {};
+			opts.name = nameOrObj;
+			sprites[nameOrObj] = new Sprite(opts);
+		} else {
+			for(var spriteName in nameOrObj) {
+				nameOrObj[spriteName] = nameOrObj[spriteName] || {};
+				nameOrObj[spriteName].name = spriteName;
+				sprites[spriteName] = new Sprite( nameOrObj[spriteName] );
+			}
+		}
+		
 		return this;
-	}; // End Table2Game.prototype.registerSprite
+	}; // End Table2Game.prototype.registerSprites
 
 	/**
 	 * @description Removes a Sprite object from the current game.
-	 * @param {string|Object} nameOrSprite The Sprite object or name of the Sprite object being removed.
+	 * @param {string|Object} nameOrSprite The Sprite object or name of the Sprite object being removed (accepts any number of arguments).
 	 * @returns {Object} The current Table2Game object.
 	 */
 	Table2Game.prototype.unregisterSprite = function(nameOrSprite) {
-		if(typeof nameOrSprite === "string")
-			delete sprites[nameOrSprite];
-		else
-			delete sprites[nameOrSprite.name];
+		if(arguments.length > 1) {
+			for(var i = 0; i < arguments.length; i++) {
+				if(typeof arguments[i] === "string") {
+					delete sprites[arguments[i]];
+				}	else {
+					delete sprites[arguments[i]];
+				}
+			}
+		} else {
+			if(typeof nameOrSprite === "string") {
+				delete sprites[nameOrSprite];
+			}	else {
+				delete sprites[nameOrSprite.name];
+			}
+		}
 
 		return this;
 	}; // End Table2Game.prototype.unregisterSprite()
@@ -806,22 +828,36 @@
 
 	/**
 	 * @description Adds a `global` variable object to the current game.
-	 * @param {string|Object} name The name of the global object being added.
+	 * @param {string|Object} nameOrObj The name of the global object being added, or a plain JavaScript object with
+	 *   keys that are names for the new globals and values that are values for the new globals.
 	 * @returns {Object} The current Table2Game object.
 	 */
-	Table2Game.prototype.registerGlobal = function(name, obj) {
-		globals[name] = obj;
+	Table2Game.prototype.registerGlobals = function(nameOrObj, val) {
+		if(typeof nameOrObj === "string") {
+			globals[nameOrObj] = val;
+		} else {
+			for(var x in nameOrObj) {
+				globals[x] = nameOrObj[x];
+			}
+		}
+
 		return this;
-	}; // End Table2Game.prototype.registerGlobal()
+	}; // End Table2Game.prototype.registerGlobals()
 
 	/**
 	 * @description Removes a `global` object from the current game.
-	 * @param {string|Object} name The name of the `global` object being removed.
+	 * @param {string} name The name of the `global` object being removed (accepts any nonzero number of arguments).
 	 * @returns {Object} The current Table2Game object.
 	 */
-	Table2Game.prototype.unregisterGlobal = function(name) {
-		delete globals[name];
-	}; // Table2Game.prototype.unregisterGlobal()
+	Table2Game.prototype.unregisterGlobals = function(name) {
+		if(arguments.length > 1) {
+			for(var i = 0; i < arguments.length; i++) {
+				delete globals[arguments[i]];
+			}
+		} else {
+			delete globals[name];
+		}
+	}; // Table2Game.prototype.unregisterGlobals()
 
 	/**
 	 * @description Get the current list of globals, or a particular subset by name.
@@ -852,14 +888,21 @@
 
 	/**
 	 * @description Updates the value of a given `global` variable in the current game.
-	 * @param {string} name The name of the global variable.
+	 * @param {string|Object} nameOrObj The name of the global variable.
 	 * @param {*} val The value that the given global is being set to.
 	 * @returns {Object} The current Table2Game object.
 	 */
-	Table2Game.prototype.setGlobal = function(name, val) {
-		globals[name] = val;
+	Table2Game.prototype.setGlobals = function(nameOrObj, val) {
+		if(typeof nameOrObj === "string") {
+			globals[nameOrObj] = val;
+		} else {
+			for(var x in nameOrObj) {
+				globals[x] = nameOrObj[x];
+			}
+		}
+
 		return this;
-	}; // End Table2Game.prototype.setGlobal()
+	}; // End Table2Game.prototype.setGlobals()
 
 	// Gets the HTML table being used in the current Table2Game instance.
 	Table2Game.prototype.getTable = function() {
@@ -877,12 +920,12 @@
 	 * @param {number} y The y coordinate (in the game screen) of the cell.
 	 * @returns {Object} The <td> or <th> cell at the given coordinates.
 	 */
-	Table2Game.prototype.getCell = function(x, y) {
+	Table2Game.prototype.getCellAt = function(x, y) {
 		if(x < 0 || y < 0 || x > screenWidth || y > screenHeight)
 			return { style: {color: "", backgroundColor: ""} };
 		else 
 			return tableArr[y][x];
-	}; // End Table2Game.prototype.getCell()
+	}; // End Table2Game.prototype.getCellAt()
 
 	/**
 	 * @description Determines if two objects are colliding on the game screen.
@@ -1094,19 +1137,19 @@
 		if(width === 0) {
 			for(var i = y, len = Math.min(y + height, screenHeight); i < len; i++) {
 				for(var j = x, jLen = Math.min(x + width, screenWidth); j < jLen; j++) {
-					this.getCell(j, i).style["border-left"] = "1px solid " + color;
+					this.getCellAt(j, i).style["border-left"] = "1px solid " + color;
 				}
 			}		
 		} else if(height === 0) {
 			for(var i = y, len = Math.min(y + height, screenHeight); i < len; i++) {
 				for(var j = x, jLen = Math.min(x + width, screenWidth); j < jLen; j++) {
-					this.getCell(j, i).style["border-top"] = "1px solid " + color;
+					this.getCellAt(j, i).style["border-top"] = "1px solid " + color;
 				}
 			}			
 		} else {
 			for(var i = y, len = Math.min(y + height, screenHeight); i < len; i++) {
 				for(var j = x, jLen = Math.min(x + width, screenWidth); j < jLen; j++) {
-					this.getCell(j, i).style.backgroundColor = color;
+					this.getCellAt(j, i).style.backgroundColor = color;
 				}
 			}
 		}
@@ -1295,7 +1338,7 @@
 	 * @returns {Object|number} If the given cell exists in the current stored data, returns an object
 	 *   with keys x and y, pointing respectively to the x and y values for this cell. Otherwise returns -1.
 	 */
-	Table2Game.prototype.cellCoordinates = function(cell) {
+	Table2Game.prototype.getCellCoords = function(cell) {
 		var tableArr = this.getTableArr();
 
 		for(var i = 0; i < tableArr.length; i++) {
@@ -1308,7 +1351,7 @@
 		}
 
 		return -1;
-	}; // End Table2Game.prototype.cellCoordinates()
+	}; // End Table2Game.prototype.getCellCoords()
 
 	/**
 	 * @description Attempt to reposition a sprite so that it's the last thing drawn to the screen.
@@ -1327,7 +1370,7 @@
 			}
 		}
 
-		return this.unregisterSprite(spriteName).registerSprite(spriteName, storedSpriteVals);
+		return this.unregisterSprite(spriteName).registerSprites(spriteName, storedSpriteVals);
 	}; // End Table2Game.prototype.moveToTop()
 
 	/**
@@ -1379,9 +1422,9 @@
 	/* Ping Pong */
 
 	demoGamesOpts["Ping Pong"].init = function() {
-		this.registerSprite("leftPaddle", {x: 0, y: 2, width: 1, height: 3, velocityX: 0, velocityY: 0, color: this.defaultColor});
-		this.registerSprite("rightPaddle", {x: this.screenWidth - 1, y: 2, width: 1, height: 3, velocityX: 0, velocityY: 0, color: this.defaultColor});
-		this.registerSprite("ball", {x: 3, y: 2, velocityX: 1, velocityY: 1});
+		this.registerSprites("leftPaddle", {x: 0, y: 2, width: 1, height: 3, velocityX: 0, velocityY: 0, color: this.defaultColor});
+		this.registerSprites("rightPaddle", {x: this.screenWidth - 1, y: 2, width: 1, height: 3, velocityX: 0, velocityY: 0, color: this.defaultColor});
+		this.registerSprites("ball", {x: 3, y: 2, velocityX: 1, velocityY: 1});
 	};
 
 	demoGamesOpts["Ping Pong"].details = {
@@ -1496,6 +1539,8 @@
 	demoGamesOpts["Ping Pong"].delay = 100;
 
 	demoGamesOpts["Ping Pong"].onkeydown = function(e) {
+		e.preventDefault();
+		
 		var paddle = this.getSprites("rightPaddle");
 		
 		switch(e.keyCode) {
@@ -1526,7 +1571,7 @@
 	/* Snake */
 
 	demoGamesOpts["Snake"].init = function() {
-		this.registerSprite("snake", {
+		this.registerSprites("snake", {
 			x: Math.floor(this.screenWidth / 2),
 			y: Math.floor(this.screenHeight / 2),
 			width: 1,
@@ -1536,7 +1581,7 @@
 			polygon: [{x: Math.floor(this.screenWidth / 2), y: Math.floor(this.screenHeight / 2), width: 1, height: 1}]
 		});
 		
-		this.registerGlobal("timeCount", 0);
+		this.registerGlobals("timeCount", 0);
 	};
 
 	demoGamesOpts["Snake"].details = {
@@ -1564,7 +1609,7 @@
 			stackBuilding++;
 		}
 
-		this.registerSprite("block" + Object.keys(this.getSprites()).length, {x: x, y: y, width: 1, height: 1, color: "#ddd"});
+		this.registerSprites("block" + Object.keys(this.getSprites()).length, {x: x, y: y, width: 1, height: 1, color: "#ddd"});
 	};
 
 	demoGamesOpts["Snake"].update = function() {
@@ -1578,7 +1623,7 @@
 			lastY = snake.polygon[snake.polygon.length - 1].y,
 			idx = 0;
 
-		this.setGlobal("timeCount", this.getGlobals("timeCount") + 1);
+		this.setGlobals("timeCount", this.getGlobals("timeCount") + 1);
 
 		if(this.getGlobals("timeCount") % 15 === 14 && Object.keys(this.getSprites()).length < 2) {
 			addBlockToScreen.call(this, snake.polygon);
@@ -1684,9 +1729,9 @@
 	/* Break Bricks */
 
 	demoGamesOpts["Break Bricks"].init = function() {
-		this.registerGlobal("score", 0).registerGlobal("lives", 0);
+		this.registerGlobals({"score": 0, "lives": 0});
 
-		this.registerSprite("paddle", {
+		this.registerSprites("paddle", {
 			x: Math.floor(this.screenWidth / 2),
 			y: this.screenHeight - 1,
 			velocityX: 0,
@@ -1697,7 +1742,7 @@
 
 		for(var i = 0; i < 3; i++) {
 			for(var j = 0; j < this.screenWidth; j++) {
-				this.registerSprite("block_" + i + "_" + j, {
+				this.registerSprites("block_" + i + "_" + j, {
 					x: j,
 					y: i,
 					velocityX: 0,
@@ -1708,7 +1753,7 @@
 			}
 		}
 		
-		this.registerSprite("ball", {
+		this.registerSprites("ball", {
 			x: Math.floor(this.screenWidth / 2) + 1,
 			y: this.screenHeight - 2,
 			velocityX: 0,
@@ -1848,9 +1893,11 @@
 	/* Whack-a-mole */
 
 	demoGamesOpts["Whack-a-mole"].init = function() {
-		this.registerGlobal("timeCount", 0);
-		this.registerGlobal("currentWait", 20);
-		this.registerGlobal("gameOver", false);
+		this.registerGlobals({
+			"timeCount" : 0,
+			"currentWait" : 20,
+			"gameOver" : false
+		});
 	};
 
 	demoGamesOpts["Whack-a-mole"].details = {
@@ -1865,7 +1912,7 @@
 		var timeCount = this.getGlobals("timeCount"),
 			currentWait = this.getGlobals("currentWait");
 
-		this.setGlobal("timeCount", timeCount + 1);
+		this.setGlobals("timeCount", timeCount + 1);
 		timeCount++;
 
 		if(timeCount % currentWait === 0) {
@@ -1875,7 +1922,7 @@
 		if(timeCount === 1000) {
 			return winMoleGame.call(this);
 		} else if(timeCount % 100 === 0) {
-			this.setGlobal("currentWait", currentWait - 1);
+			this.setGlobals("currentWait", currentWait - 1);
 		}
 
 		if(Object.keys(this.getSprites()).length > 10) {
@@ -1899,22 +1946,22 @@
 			}
 		}
 		
-		this.registerSprite("mole_" + x + "_" + y, {x: x, y: y});
+		this.registerSprites("mole_" + x + "_" + y, {x: x, y: y});
 	};
 
 	var winMoleGame = function() {
-		this.setGlobal("gameOver", true);
-		this.registerSprite("gameOverIndicator", {x: 0, y: 0, width: 1, height: 1, color: "#ddffdd"});
+		this.setGlobals("gameOver", true);
+		this.registerSprites("gameOverIndicator", {x: 0, y: 0, width: 1, height: 1, color: "#ddffdd"});
 	};
 
 	var loseMoleGame = function() {
-		this.setGlobal("gameOver", true);
-		this.registerSprite("gameOverIndicator", {x: 0, y: 0, width: 1, height: 1, color: "#ffdddd"});
+		this.setGlobals("gameOver", true);
+		this.registerSprites("gameOverIndicator", {x: 0, y: 0, width: 1, height: 1, color: "#ffdddd"});
 	};
 
 	demoGamesOpts["Whack-a-mole"].onclick = function(e) {
 		var cell = this.closestCell(e.target),
-			coords = this.cellCoordinates(cell),
+			coords = this.getCellCoords(cell),
 			x = coords.x,
 			y = coords.y;
 
@@ -1934,13 +1981,13 @@
 			table = self.getTable();
 
 		colorInput.type = "color";
-		self.registerGlobal("paintedCount", 0);
+		self.registerGlobals("paintedCount", 0);
 
 		colorInput.style.marginLeft = self.table.style.marginLeft ||
 			(window.getComputedStyle ? window.getComputedStyle(self.table).getPropertyValue("margin-left") : "");
 		
 		colorInput.onchange = function(e) {
-			self.setGlobal("storedColor", this.value);
+			self.setGlobals("storedColor", this.value);
 		};
 
 		 var detailsElm = this.getDetailsElement();
@@ -1948,15 +1995,17 @@
 		table.style.marginBottom = "0";
 		colorElm.appendChild(colorInput);
 		table.parentNode.insertBefore(colorElm, table.nextSibling);
-		self.registerGlobal("colorInput", colorInput)
-			.registerGlobal("colorElm", colorElm)
-			.registerGlobal("storedColor", "#000000")
-			.registerGlobal("overTable", false)
-			.registerGlobal("overColorElm", false);
+		self.registerGlobals({
+				"colorInput" : colorInput,
+				"colorElm" : colorElm,
+				"storedColor" : "#000000",
+				"overTable" : false,
+				"overColorElm" : false
+		});
 
 		// We'll pause to hide, when the mouse leaves both the table and color input
 		handleElmEvent(colorElm, "mouseleave", function(){
-			self.setGlobal("overColorElm", false);
+			self.setGlobals("overColorElm", false);
 
 			if(!self.getGlobals("overTable")) {
 				self.pause();
@@ -1964,7 +2013,7 @@
 		}, false);
 
 		handleElmEvent(colorElm, "mouseenter", function(){
-			self.setGlobal("overColorElm", true);
+			self.setGlobals("overColorElm", true);
 			self.unpause();
 		}, false);
 	};
@@ -1978,7 +2027,7 @@
 	};
 
 	demoGamesOpts["Paint"].onmouseleave = function(e) {
-		this.setGlobal("overTable", false);
+		this.setGlobals("overTable", false);
 
 		if(!self.getGlobals("overColorElm")) {
 			self.pause();
@@ -1986,7 +2035,7 @@
 	};
 
 	demoGamesOpts["Paint"].onmouseenter = function(e) {
-		this.setGlobal("overTable", true);
+		this.setGlobals("overTable", true);
 		this.unpause();
 	};
 
@@ -2003,15 +2052,15 @@
 			cellToPaint = this.closestCell(e.target),
 			paintedCount = this.getGlobals("paintedCount");
 
-		this.registerSprite("paintedCount" + paintedCount, {
-					x: this.cellCoordinates(cellToPaint).x,
-					y: this.cellCoordinates(cellToPaint).y,
+		this.registerSprites("paintedCount" + paintedCount, {
+					x: this.getCellCoords(cellToPaint).x,
+					y: this.getCellCoords(cellToPaint).y,
 					width: 1,
 					height: 1,
 					color: this.getGlobals("storedColor")
 				});
 
-		this.setGlobal("paintedCount", (paintedCount + 1));
+		this.setGlobals("paintedCount", (paintedCount + 1));
 	};
 	
 	///////////////////////////////////////////////////
@@ -2019,63 +2068,63 @@
 
 	demoGamesOpts["Maze"].init = function() {
 
-		this.registerSprite("wall1", {
+		this.registerSprites("wall1", {
 			x: 0,
 			y: 0,
 			width: 3,
 			height: 1	
-		}).registerSprite("wall2", {
+		}).registerSprites("wall2", {
 			x: 6,
 			y: 0,
 			width: 1,
 			height: 1	
-		}).registerSprite("wall3", {
+		}).registerSprites("wall3", {
 			x: 1,
 			y: 2,
 			width: 3,
 			height: 1
-		}).registerSprite("wall4", {
+		}).registerSprites("wall4", {
 			x: 8,
 			y: 1,
 			width: 1,
 			height: 1
-		}).registerSprite("wall5", {
+		}).registerSprites("wall5", {
 			x: 4,
 			y: 1,
 			width: 1,
 			height: 4	
-		}).registerSprite("wall6", {
+		}).registerSprites("wall6", {
 			x: 0,
 			y: 4,
 			width: 3,
 			height: 1	
-		}).registerSprite("wall7", {
+		}).registerSprites("wall7", {
 			x: 5,
 			y: 2,
 			width: 3,
 			height: 1
-		}).registerSprite("wall8", {
+		}).registerSprites("wall8", {
 			x: 9,
 			y: 0,
 			width: 1,
 			height: this.screenHeight	
-		}).registerSprite("wall9", {
+		}).registerSprites("wall9", {
 			x: 0,
 			y: 6,
 			width: this.screenWidth,
 			height: 1
-		}).registerSprite("wall10", {
+		}).registerSprites("wall10", {
 			x: 5,
 			y: 4,
 			width: 3,
 			height: 1
-		}).registerSprite("goal", {
+		}).registerSprites("goal", {
 			x: 8,
 			y: 0,
 			width: 1,
 			height: 1,
 			color: "#ddffdd"
-		}).registerSprite("player", {
+		}).registerSprites("player", {
 			x: 0,
 			y: 5,
 			width: 1,
@@ -2224,7 +2273,7 @@
 	/* Creepy Crawler */
 
 	demoGamesOpts["Creepy Crawler"].init = function() {
-		this.registerSprite("crawler", {
+		this.registerSprites("crawler", {
 			velocityX: 1,
 			x: -1,
 			y: -1,
@@ -2234,7 +2283,7 @@
 				{x: 0, y: 0, width: 1, height: 1}]
 		});
 
-		this.registerSprite("player", {
+		this.registerSprites("player", {
 			x: Math.floor(this.screenWidth / 2),
 			y: Math.floor(this.screenHeight - 1),
 			width: 1,
@@ -2351,7 +2400,7 @@
 		this.height = opts.height || 1;
 		this.name = opts.name || "playerBullet" + bulletCount;
 
-		Table2GameObj.registerSprite(this.name, {
+		Table2GameObj.registerSprites(this.name, {
 			x: opts.x,
 			y: opts.y,
 			velocityX: opts.velocityX,
@@ -2383,7 +2432,7 @@
 		hurdleJumpCurrent = 0;
 
 	demoGamesOpts["Jumper"].init = function() {
-		this.registerSprite("player", {
+		this.registerSprites("player", {
 				x: 2,
 				y: this.screenHeight - 2,
 				width: 1,
@@ -2391,7 +2440,7 @@
 				velocityX: 0,
 				velocityY: 0
 			})
-			.registerSprite("ground", {
+			.registerSprites("ground", {
 				x: 0,
 				y: this.screenHeight - 1,
 				width: this.screenWidth,
@@ -2399,9 +2448,9 @@
 				velocityX: 0,
 				velocityY: 0
 			})
-			.registerGlobal("awaitingReset", false)
-			.registerGlobal("walls", {})
-			.registerGlobal("timeCount", 0);
+			.registerGlobals("awaitingReset", false)
+			.registerGlobals("walls", {})
+			.registerGlobals("timeCount", 0);
 
 		setUpHurdles.call(this);
 	};
@@ -2417,7 +2466,7 @@
 			walls = this.getGlobals("walls"),
 			player = this.getSprites("player");
 
-		this.setGlobal("timeCount", timeCount + 1);
+		this.setGlobals("timeCount", timeCount + 1);
 		
 		for(var name in sprites) {
 			if(name === "player" || name === "ground") {
@@ -2435,7 +2484,7 @@
 		}
 		
 		if(walls[timeCount]) {
-			this.registerSprite("hurdle" + (sprites["hurdle" + timeCount] ? timeCount + "" + parseInt(Math.random()*100) : timeCount),
+			this.registerSprites("hurdle" + (sprites["hurdle" + timeCount] ? timeCount + "" + parseInt(Math.random()*100) : timeCount),
 			{
 				x: this.screenWidth - 1,
 				y: (typeof walls[timeCount].y === "undefined") ? (this.screenHeight - 1 - walls[timeCount].height) : walls[timeCount].y,
@@ -2475,7 +2524,7 @@
 				}
 
 				if(this.colliding(player, sprites[name])) {
-					this.setGlobal("awaitingReset", true);
+					this.setGlobals("awaitingReset", true);
 					this.flashEnding(null, null, setUpHurdles);
 				}
 			}
@@ -2534,9 +2583,9 @@
 		}
 		
 		this.flashEndingPosition = 0; // Reseting this value allows us to restart/replay the game immediately
-		this.setGlobal("walls", walls)
-			.setGlobal("timeCount", 0)
-			.setGlobal("awaitingReset", false);
+		this.setGlobals("walls", walls)
+			.setGlobals("timeCount", 0)
+			.setGlobals("awaitingReset", false);
 
 		player.x = 2;
 		player.y = this.screenHeight - 2;
@@ -2622,62 +2671,58 @@
 		var halfWidth = parseInt(this.screenWidth / 2, 10),
 			halfHeight = parseInt(this.screenHeight / 2, 10);
 
-		this.registerGlobal("shootingSpot", 0);
-		this.registerGlobal("timeCount", 0);
+		this.registerGlobals("shootingSpot", 0)
+			.registerGlobals("timeCount", 0)			
+			.registerSprites("enemy0", {
+				x: 2,
+				y: 2,
+				width: 1,
+				height: 1,
+				color: "#ffdddd"
+			})
+			.registerSprites("enemy1", {
+				x: Math.ceil(this.screenWidth / 2),
+				y: 2,
+				width: 1,
+				height: 1,
+				color: "#ddffdd"
+			})
+			.registerSprites("enemy2", {
+				x: 2 * Math.floor(this.screenWidth / 3),
+				y: Math.ceil(this.screenHeight / 2),
+				width: 1,
+				height: 1,
+				color: "#ddddff"
+			})
+			.registerSprites("enemy3", {
+				x: Math.ceil(this.screenWidth / 3),
+				y: Math.ceil(this.screenHeight / 2),
+				width: 1,
+				height: 1,
+				color: "#fdddbb"
+			})
+			.registerGlobals("scopeCoords", {
+				x: 1,
+				y: 1
+			});
 
-		this.registerSprite("enemy0", {
-			x: 2,
-			y: 2,
-			width: 1,
-			height: 1,
-			color: "#ffdddd"
-		});
-
-		this.registerSprite("enemy1", {
-			x: Math.ceil(this.screenWidth / 2),
-			y: 2,
-			width: 1,
-			height: 1,
-			color: "#ddffdd"
-		});
-
-		this.registerSprite("enemy2", {
-			x: 2 * Math.floor(this.screenWidth / 3),
-			y: Math.ceil(this.screenHeight / 2),
-			width: 1,
-			height: 1,
-			color: "#ddddff"
-		});
-
-		this.registerSprite("enemy3", {
-			x: Math.ceil(this.screenWidth / 3),
-			y: Math.ceil(this.screenHeight / 2),
-			width: 1,
-			height: 1,
-			color: "#fdddbb"
-		});
+		this.registerSprites("scopePart0", {
+				x: 0,
+				y: 0,
+				width: 7,
+				height: 1,
+				color: "#eee"
+			});
 		
-		this.registerGlobal("scopeCoords", {
-			x: 1,
-			y: 1
-		});
-
-		this.registerSprite("scopePart0", {
-			x: 0,
-			y: 0,
-			width: 7,
-			height: 1,
-			color: "#eee"
-		});
-		
-		this.registerSprite("scopePart1", {
+		this.registerSprites("scopePart1", {
 			x: 0,
 			y: 1,
 			width: 3,
 			height: 1,
 			color: "#eee"
 		});
-		this.registerSprite("scopePart2", {
+
+		this.registerSprites("scopePart2", {
 			x: 4,
 			y: 1,
 			width: 3,
@@ -2685,7 +2730,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePart3", {
+		this.registerSprites("scopePart3", {
 			x: 0,
 			y: 2,
 			width: 2,
@@ -2693,7 +2738,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePart4", {
+		this.registerSprites("scopePart4", {
 			x: 5,
 			y: 2,
 			width: 2,
@@ -2701,7 +2746,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePart5", {
+		this.registerSprites("scopePart5", {
 			x: 0,
 			y: 3,
 			width: 1,
@@ -2709,7 +2754,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePart6", {
+		this.registerSprites("scopePart6", {
 			x: 6,
 			y: 3,
 			width: 1,
@@ -2717,7 +2762,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePart7", {
+		this.registerSprites("scopePart7", {
 			x: 0,
 			y: 4,
 			width: 2,
@@ -2725,7 +2770,7 @@
 			color: "#eee"
 		});
 
-		this.registerSprite("scopePart8", {
+		this.registerSprites("scopePart8", {
 			x: 5,
 			y: 4,
 			width: 2,
@@ -2733,7 +2778,7 @@
 			color: "#eee"
 		});
 
-		this.registerSprite("scopePart9", {
+		this.registerSprites("scopePart9", {
 			x: 0,
 			y: 5,
 			width: 3,
@@ -2741,7 +2786,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePart10", {
+		this.registerSprites("scopePart10", {
 			x: 4,
 			y: 5,
 			width: 3,
@@ -2749,7 +2794,7 @@
 			color: "#eee"
 		});
 
-		this.registerSprite("scopePart11", {
+		this.registerSprites("scopePart11", {
 			x: 0,
 			y: 6,
 			width: 7,
@@ -2757,7 +2802,7 @@
 			color: "#eee"
 		});
 
-		this.registerSprite("scopePartTop", {
+		this.registerSprites("scopePartTop", {
 			x: 0,
 			y: -1 * halfHeight,
 			width: 7,
@@ -2765,7 +2810,7 @@
 			color: "#eee"
 		});
 
-		this.registerSprite("scopePartLeft", {
+		this.registerSprites("scopePartLeft", {
 			x: -1 * halfWidth,
 			y: -1 * halfHeight,
 			width: halfWidth,
@@ -2773,7 +2818,7 @@
 			color: "#eee"
 		});
 
-		this.registerSprite("scopePartRight", {
+		this.registerSprites("scopePartRight", {
 			x: 7,
 			y: -1 * halfHeight,
 			width: halfWidth,
@@ -2781,7 +2826,7 @@
 			color: "#eee"
 		});
 		
-		this.registerSprite("scopePartBottom", {
+		this.registerSprites("scopePartBottom", {
 			x: 0,
 			y: 6,
 			width: 7,
@@ -2801,7 +2846,7 @@
 			timeCount = this.getGlobals("timeCount");
 
 		timeCount++
-		this.setGlobal("timeCount", timeCount);
+		this.setGlobals("timeCount", timeCount);
 
 		// Detect enemy deaths
 		if(shootingSpot) {
@@ -2815,7 +2860,7 @@
 			}
 
 			shootingSpot--;
-			this.setGlobal("shootingSpot", shootingSpot);
+			this.setGlobals("shootingSpot", shootingSpot);
 			
 			enemies = this.getSprites(/enemy/);
 			if(!Object.keys(enemies).length) {
@@ -2895,7 +2940,7 @@
 				break;
 			case 13: // Enter
 				if(!shootingSpot) {
-					this.setGlobal("shootingSpot", 4);
+					this.setGlobals("shootingSpot", 4);
 				}
 			break;
 			case 32: // Space
@@ -2939,14 +2984,16 @@
 
 		// Location of the starting room on the map
 		var roomCoords = {x: 1, y: 3};
-		this.registerGlobal("roomCoords", roomCoords);
-
-		this.registerGlobal("startingColor", "#ddd");
-		this.registerGlobal("roomTimeCount", 0);
-		this.registerGlobal("gameOver", false);
-		this.registerGlobal("hasKey", false);
-		this.registerGlobal("hasBlock", false);
-		this.registerGlobal("blockCoords", {
+		this.registerGlobals({
+			"roomCoords" : roomCoords,
+			"startingColor" : "#ddd",
+			"roomTimeCount" : 0,
+			"gameOver" : false,
+			"hasKey" : false,
+			"hasBlock" : false
+		});
+		
+		this.registerGlobals("blockCoords", {
 			blockCoords: {
 				x: Math.floor(this.screenWidth / 2),
 				y: 3,
@@ -2958,7 +3005,7 @@
 			}
 		});
 
-		this.registerGlobal("doorCoords", {
+		this.registerGlobals("doorCoords", {
 			left: {
 				x: 0,
 				y: Math.floor(this.screenHeight / 2)
@@ -2977,7 +3024,7 @@
 			}
 		});
 
-		this.registerSprite("player", {
+		this.registerSprites("player", {
 			x: Math.floor(this.screenWidth / 2),
 			y: Math.ceil(this.screenHeight / 2),
 			width: 1,
@@ -2985,28 +3032,28 @@
 			color: "#ddd"
 		});
 		
-		this.registerSprite("topWall", {
+		this.registerSprites("topWall", {
 			x: 0,
 			y: 0,
 			width: this.screenWidth,
 			height: 1
 		});
 		
-		this.registerSprite("bottomWall", {
+		this.registerSprites("bottomWall", {
 			x: 0,
 			y: this.screenHeight - 1,
 			width: this.screenWidth,
 			height: 1
 		});
 		
-		this.registerSprite("leftWall", {
+		this.registerSprites("leftWall", {
 			x: 0,
 			y: 0,
 			width: 1,
 			height: this.screenHeight
 		});
 		
-		this.registerSprite("rightWall", {
+		this.registerSprites("rightWall", {
 			x: this.screenWidth - 1,
 			y: 0,
 			width: 1,
@@ -3046,7 +3093,7 @@
 							
 							if(this.colliding(player, blockWall)) {
 								blockWall.y--;
-								this.setGlobal("hasBlock", false);
+								this.setGlobals("hasBlock", false);
 								
 								if(this.colliding(blockWall, topDoor)) {
 									blockCoords.mapCoords.y--;
@@ -3078,7 +3125,7 @@
 							
 							if(this.colliding(player, blockWall)) {
 								blockWall.y++;
-								this.setGlobal("hasBlock", false);
+								this.setGlobals("hasBlock", false);
 								
 								if(this.colliding(blockWall, bottomDoor)) {
 									blockCoords.mapCoords.y++;
@@ -3110,7 +3157,7 @@
 							
 							if(this.colliding(player, blockWall)) {
 								blockWall.x--;
-								this.setGlobal("hasBlock", false);
+								this.setGlobals("hasBlock", false);
 								
 								if(this.colliding(blockWall, leftDoor)) {
 									blockCoords.mapCoords.x--;
@@ -3136,7 +3183,7 @@
 				if(key && this.colliding(player, key)) {
 					player.color = key.color;
 					this.unregisterSprite("key");
-					this.setGlobal("hasKey", true);
+					this.setGlobals("hasKey", true);
 					this.unregisterSprite("enemy" + (this.screenWidth - 2));
 				}
 				
@@ -3155,7 +3202,7 @@
 							
 							if(this.colliding(player, blockWall)) {
 								blockWall.x++;
-								this.setGlobal("hasBlock", false);
+								this.setGlobals("hasBlock", false);
 								
 								if(this.colliding(blockWall, rightDoor)) {
 									blockCoords.mapCoords.x++;
@@ -3204,7 +3251,7 @@
 				if(blockWall && this.colliding(blockWall, enemies[enemy])) {
 					this.unregisterSprite(enemy);
 					this.unregisterSprite("block");
-					this.setGlobal("blockCoords", {
+					this.setGlobals("blockCoords", {
 						blockCoords: {
 							x: -1,
 							y: -1
@@ -3253,7 +3300,7 @@
 					switch(roomCoords.x) {
 						case 0:
 							drawDungeonDoors.call(this, "bottom", "right");
-							this.registerSprite("enemy0", {x: 1, y: 1, color: dungeHoleColor});
+							this.registerSprites("enemy0", {x: 1, y: 1, color: dungeHoleColor});
 							// holes that come down diagonally from top left to bottom right, then disappear
 						break;
 						case 1:
@@ -3263,7 +3310,7 @@
 								trapLen = this.screenWidth - (hasKey ? 3 : 2);
 								
 							for(var i = 1; i <= trapLen; i++) {
-								this.registerSprite("enemy" + i, {
+								this.registerSprites("enemy" + i, {
 									x: i,
 									y: this.screenHeight - 3,
 									width: 1,
@@ -3273,7 +3320,7 @@
 							}
 
 							if(!hasKey) {
-								this.registerSprite("key", {
+								this.registerSprites("key", {
 									x: 1,
 									y: this.screenHeight - 2,
 									color: this.yellow // "#ffffdd"
@@ -3286,7 +3333,7 @@
 							// Hidden doorway
 							var doorCoords = this.getGlobals("doorCoords");
 
-							this.registerSprite("topDoor", {
+							this.registerSprites("topDoor", {
 								x: doorCoords["top"].x,
 								y: doorCoords["top"].y,
 								width: 1,
@@ -3297,7 +3344,7 @@
 							var enemiesArr = [];
 							
 							for(var i = 1; i <= this.screenWidth - 2; i++) {
-								this.registerSprite("enemy" + i, {
+								this.registerSprites("enemy" + i, {
 									x: i,
 									y: 2,
 									width: 1,
@@ -3312,33 +3359,33 @@
 						case 4:
 							drawDungeonDoors.call(this, "bottom", "top");
 							// Final room. Exit door on the top.
-							this.registerSprite("block", {
+							this.registerSprites("block", {
 								x: 1,
 								y: 2,
 								width: this.screenWidth - 2,
 								color: dungeBlockColor
 							});
 
-							this.registerSprite("keyhole", {
+							this.registerSprites("keyhole", {
 								x: Math.floor(this.screenWidth / 2),
 								y: 2,
 								color: this.yellow // "#ffffdd"
 							});
 							
-							this.registerSprite("gameWinningDoor", {
+							this.registerSprites("gameWinningDoor", {
 								x: Math.floor(this.screenWidth / 2),
 								y: 0,
 								color: this.green // "#ddffdd"
 							});
 							
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: 1,
 								y: 1,
 								width: Math.floor(this.screenWidth / 2) - 2,
 								color: dungeHoleColor
 							});
 							
-							this.registerSprite("enemy1", {
+							this.registerSprites("enemy1", {
 								x: Math.floor(gt.screenWidth / 2) + 2,
 								y: 1,
 								width: (gt.screenWidth - Math.floor(gt.screenWidth / 2) - 3),
@@ -3353,11 +3400,11 @@
 					switch(roomCoords.x) {
 						case 0:
 							drawDungeonDoors.call(this, "top", "bottom");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: 2,
 								y: 2,
 								color: dungeHoleColor
-							}).registerSprite("enemy1", {
+							}).registerSprites("enemy1", {
 								x: this.screenWidth - 3,
 								y: this.screenHeight - 3,
 								color: dungeHoleColor
@@ -3365,7 +3412,7 @@
 						break;
 						case 1:
 							drawDungeonDoors.call(this, "top", "right");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								polygon: [{
 									x: this.screenWidth - 2,
 									y: this.screenHeight - 2,
@@ -3377,11 +3424,11 @@
 						break;
 						case 2:
 							drawDungeonDoors.call(this, "top", "left");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: 2,
 								y: 2,
 								color: dungeHoleColor
-							}).registerSprite("enemy1", {
+							}).registerSprites("enemy1", {
 								x: 2,
 								y: 2,
 								color: dungeHoleColor
@@ -3389,11 +3436,11 @@
 						break;
 						case 3:
 							drawDungeonDoors.call(this, "top", "bottom");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: this.screenWidth - 2,
 								y: 2,
 								color: dungeHoleColor
-							}).registerSprite("enemy1", {
+							}).registerSprites("enemy1", {
 								x: 1,
 								y: this.screenHeight - 3,
 								color: dungeHoleColor
@@ -3405,7 +3452,7 @@
 							var player = this.getSprites("player");
 							
 							if(player.y === 1) { // Came in from above
-								this.registerSprite("enemy0", {
+								this.registerSprites("enemy0", {
 									velocityX: -1,
 									x: -1,
 									y: -1,
@@ -3415,7 +3462,7 @@
 								var enemy0 = this.getSprites("enemy0"),
 									enemyLen = Math.floor((this.screenWidth - 2) / 2); // centipede is half the room in length
 								
-								this.setGlobal("roomTimeCount", (this.screenWidth - 2) * (this.screenHeight - 2));
+								this.setGlobals("roomTimeCount", (this.screenWidth - 2) * (this.screenHeight - 2));
 								
 								for(var i = 2; i <= enemyLen; i++) {
 									enemy0.polygon.push({x: this.screenWidth - i, y: this.screenHeight - 2, width: 1, height: 1, color: dungeHoleColor});
@@ -3423,7 +3470,7 @@
 								
 								enemy0.polygon.reverse();
 							} else {
-								this.registerSprite("enemy0", {
+								this.registerSprites("enemy0", {
 									velocityX: 1,
 									x: -1,
 									y: -1,
@@ -3453,7 +3500,7 @@
 								startingIndex = index;
 
 							while(index > 1) {
-								this.registerSprite("enemy" + index, {
+								this.registerSprites("enemy" + index, {
 									x: this.screenWidth - 2 - startingIndex + index,
 									y: this.screenHeight - 1 - index,
 									color: dungeHoleColor
@@ -3465,7 +3512,7 @@
 						case 1:
 							drawDungeonDoors.call(this, "bottom", "left", "right");
 							for(var i = 1; i < this.screenWidth - 1; i++) {
-								this.registerSprite("enemy" + i, {
+								this.registerSprites("enemy" + i, {
 									x: i,
 									y: 1,
 									color: dungeHoleColor
@@ -3474,7 +3521,7 @@
 						break;
 						case 2:
 							drawDungeonDoors.call(this, "left", "right");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: 2,
 								y: 2,
 								width: this.screenWidth - 4,
@@ -3484,18 +3531,18 @@
 						break;
 						case 3:
 							drawDungeonDoors.call(this, "top", "left");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: 1,
 								y: 2,
 								width: 1 + Math.floor(this.screenWidth / 2),
 								color: dungeHoleColor
-							}).registerSprite("enemy1", {
+							}).registerSprites("enemy1", {
 								x: 2 + Math.floor(this.screenWidth / 2),
 								y: 2,
 								width: 1,
 								height: this.screenHeight - 4,
 								color: dungeHoleColor
-							}).registerSprite("enemy2", {
+							}).registerSprites("enemy2", {
 								x: 2,
 								y: this.screenHeight - 3,
 								width: Math.floor(this.screenWidth / 2),
@@ -3507,18 +3554,18 @@
 
 							var holesY = 2;
 
-							this.registerSprite("enemy" + holesY, {
+							this.registerSprites("enemy" + holesY, {
 								x: Math.floor(this.screenWidth / 2),
 								y: holesY,
 								color: dungeHoleColor
 							});
 
 							while(holesY++ < this.screenHeight - 3) {
-								this.registerSprite("enemy" + holesY, {
+								this.registerSprites("enemy" + holesY, {
 									x: Math.floor(this.screenWidth / 2) - (holesY - 2),
 									y: holesY,
 									color: dungeHoleColor
-								}).registerSprite("enemy" + holesY + "B", {
+								}).registerSprites("enemy" + holesY + "B", {
 									x: Math.floor(this.screenWidth / 2)  + (holesY - 2),
 									y: holesY,
 									color: dungeHoleColor
@@ -3533,7 +3580,7 @@
 					switch(roomCoords.x) {
 						case 0:
 							drawDungeonDoors.call(this, "top", "right");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: Math.floor(this.screenWidth / 2),
 								y: Math.floor(this.screenHeight / 2),
 								color: dungeHoleColor
@@ -3545,7 +3592,7 @@
 						break;
 						case 2:
 							drawDungeonDoors.call(this, "left", "right");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: Math.floor(this.screenWidth / 2),
 								y: Math.floor(this.screenHeight / 2),
 								color: dungeHoleColor
@@ -3558,7 +3605,7 @@
 								startingIndex = index;
 							
 							while(index > 1) {
-								this.registerSprite("enemy" + index, {
+								this.registerSprites("enemy" + index, {
 									x: 1 + startingIndex - index,
 									y: index,
 									color: dungeHoleColor
@@ -3569,7 +3616,7 @@
 						break;
 						case 4:
 							drawDungeonDoors.call(this, "left", "top");
-							this.registerSprite("enemy0", {
+							this.registerSprites("enemy0", {
 								x: Math.floor(this.screenWidth / 2),
 								y: Math.floor(this.screenHeight / 2),
 								color: dungeHoleColor
@@ -3589,7 +3636,7 @@
 		var blockCoords = this.getGlobals("blockCoords");
 		
 		if(blockCoords.mapCoords.x === roomCoords.x && blockCoords.mapCoords.y === roomCoords.y) {
-			this.registerSprite("block", blockCoords.blockCoords);
+			this.registerSprites("block", blockCoords.blockCoords);
 		}
 
 		this.moveToTop("player");
@@ -3612,7 +3659,7 @@
 
 		if(!fromKey) {
 			roomTimeCount++;
-			this.setGlobal("roomTimeCount", roomTimeCount);
+			this.setGlobals("roomTimeCount", roomTimeCount);
 		}
 
 		if(topDoor && this.colliding(player, topDoor)) {
@@ -3640,8 +3687,8 @@
 		}
 		
 		if(exitingRoom) {
-			this.setGlobal("roomTimeCount", 0);
-			this.setGlobal("roomCoords", roomCoords);
+			this.setGlobals("roomTimeCount", 0);
+			this.setGlobals("roomCoords", roomCoords);
 			drawDungeonRoom.call(this, roomCoords);
 			return; // Current room's collision detection and next step in AI should be bypassed
 		}
@@ -3799,7 +3846,7 @@
 				halfPathLen = Math.floor(totalPathLen / 2);
 			
 			if(roomTimeCount === totalPathLen) {
-				this.setGlobal("roomTimeCount", this.screenWidth - 1 - centipede.polygon.length);
+				this.setGlobals("roomTimeCount", this.screenWidth - 1 - centipede.polygon.length);
 			}
 
 			if(roomTimeCount % totalPathLen > halfPathLen) {
@@ -3847,7 +3894,7 @@
 			if(blockWall && this.colliding(blockWall, enemies[enemy])) {
 				this.unregisterSprite(enemy);
 				this.unregisterSprite("block");
-				this.setGlobal("blockCoords", {
+				this.setGlobals("blockCoords", {
 					blockCoords: {
 						x: -1,
 						y: -1
@@ -3872,7 +3919,7 @@
 					
 					if(dungePushTime[side] >= 60) {
 						dungePushTime[side] = 0;
-						this.registerGlobal("hasBlock", true);
+						this.registerGlobals("hasBlock", true);
 					}
 				}
 			}
@@ -3884,17 +3931,17 @@
 
 		this.flashEndingPosition = 0;
 
-		this.setGlobal("hasKey", false);
-		this.setGlobal("hasBlock", false);
-		this.setGlobal("gameOver", false);
-		this.setGlobal("roomTimeCount", 0);
+		this.setGlobals("hasKey", false);
+		this.setGlobals("hasBlock", false);
+		this.setGlobals("gameOver", false);
+		this.setGlobals("roomTimeCount", 0);
 
-		this.setGlobal("roomCoords", {
+		this.setGlobals("roomCoords", {
 			x: 1,
 			y: 3
 		});
 
-		this.setGlobal("blockCoords", {
+		this.setGlobals("blockCoords", {
 			blockCoords: {
 				x: Math.floor(this.screenWidth / 2),
 				y: 3,
@@ -3924,7 +3971,7 @@
 		var doorCoords = this.getGlobals("doorCoords");
 
 		for(var i = 0, len = arguments.length; i < len; i++) {
-			this.registerSprite(arguments[i] + "Door", {
+			this.registerSprites(arguments[i] + "Door", {
 				x: doorCoords[arguments[i]].x,
 				y: doorCoords[arguments[i]].y,
 				width: 1,
@@ -3973,19 +4020,19 @@
 		}, totalFlashTime + 3000);
 
 		setTimeout(function() {
-			self.registerSprite("sky", {
+			self.registerSprites("sky", {
 				x: 0,
 				y: 0,
 				width: self.screenWidth,
 				height: self.screenHeight,
 				color: self.blue
-			}).registerSprite("grass", {
+			}).registerSprites("grass", {
 				x: 0,
 				y: self.screenHeight - 1,
 				width: self.screenWidth,
 				height: 1,
 				color: self.green
-			}).registerSprite("sun", {
+			}).registerSprites("sun", {
 				x: self.screenWidth - 2,
 				y: 0,
 				width: 2,
@@ -3993,7 +4040,7 @@
 				color: self.yellow
 			});
 
-			self.setGlobal("gameOver", true);
+			self.setGlobals("gameOver", true);
 			player.x = Math.floor(self.screenWidth / 2);
 			player.y = self.screenHeight - 2;
 			self.moveToTop("player");
