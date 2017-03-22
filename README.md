@@ -139,6 +139,10 @@ Returns the closest ancestor of the `target` element (of, say, a mouse click) th
 
 Returns the x and y values (within the table game canvas) of the table cell `cell`.
 
+`tg.getCellAt(x, y)`
+
+Returns the table cell element at the x-y point (`x`, `y`) in the table game canvas.
+
 `tg.clear()`
 
 Erases current game canvas.
@@ -187,7 +191,15 @@ Calls the onunpause callback defined in the constructor.
 
 Calls the onpaint callback defined in the constructor.
 
-`tg.getDetails`
+`tg.getDelay()`
+
+Returns the game update delay (in milliseconds).
+
+`tg.setDelay(newDelay)`
+
+Sets the game update delay to `newDelay` milliseconds.
+
+`tg.getDetails()`
 
 Returns the details variables (used on the scoreboard).
 
