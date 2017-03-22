@@ -105,7 +105,7 @@ We will use an example Table2Game object, named `tg` to describe the public meth
 
 `tg.constructor(optionsOrDemoGameName, demoGameOptions)`
 
-A pointer to the Table2Game constructor method.
+A pointer to the Table2Game constructor method. If creating a new game, this Table2Game constructor accepts one argument, an object with the options described above in the Options section. If using an existing game from the internal demo games, the constructor takes two arguments: the first one will be the demo game name (as a string) and the second will be a plain JavaScript object with similar options as described above (any options set here will override the equivalent options already defined in the demo game).
 
 The most important public methods relate to the three stored collections of variables: `globals`, which stores internal variables of any type to be used in the game logic; `details`, which stores variables that will be displayed on the table's visible scoreboard area; `sprites`, which stores Sprite objects, which represent objects drawn to the table game canvas.
 
@@ -135,16 +135,16 @@ Returns the HTML element used to display the details (scoreboard variables).
 
 `tg.registerSprite(name, opts)`
 
-Adds a new Sprite object to the current `sprites` collection ('registers' the Sprite), under the name defined in the string parameter `name`. You should use a unique name for any new Sprite (otherwise any Sprite with the same name will be overwritten). The `opts` parameter is a plain JavaScript object with values defining the sprite's position, size, shape, and velocity.
+Adds a new Sprite object to the current `sprites` collection ('registers' the Sprite), under the name defined in the string parameter `name`. You should use a unique name for any new Sprite (otherwise any Sprite with the same name will be overwritten). The `opts` parameter is a plain JavaScript object with values defining the Sprite's position, size, shape, and velocity.
 
-`x` - The x-value of the top left corner of the Sprite. Default is 0.
-`y` - The y-value of the top left corner of the Sprite. Default is 0.
-`velocityX` - The Sprite's initial horizontal velocity. Default is 0.
-`velocityY` - The Sprite's initial vertical velocity. Default is 0.
-`width` - The number of table cells that the Sprite spans horizontally. Default is 1.
-`height` - The number of table cells that the Sprite spans vertically. Default is 1.
-`color` - The color to draw the Sprites cells. Default is Table2Game.defaultColor.
-`polygon` - An array containing multiple Sprites to be used to draw the object. If this option is present and a nonempty array, then this array is used to draw the entire object, overriding all of the other options.
+* `x` - The x-value of the top left corner of the Sprite. Default is 0.
+* `y` - The y-value of the top left corner of the Sprite. Default is 0.
+* `velocityX` - The Sprite's initial horizontal velocity. Default is 0.
+* `velocityY` - The Sprite's initial vertical velocity. Default is 0.
+* `width` - The number of table cells that the Sprite spans horizontally. Default is 1.
+* `height` - The number of table cells that the Sprite spans vertically. Default is 1.
+* `color` - The color to draw the Sprite's cells. Default is Table2Game.defaultColor.
+* `polygon` - An array containing multiple Sprites to be used to draw the object. If this option is present and a nonempty array, then this array is used to draw the entire object, overriding all of the other options.
 
 `tg.unregisterSprite(name)`
 
@@ -254,13 +254,13 @@ Sets the game update delay to `newDelay` milliseconds.
 
 `tg.addGamesList(gamesList)`
 
-Creates a `<select>` element after the table, containing names of games to choose from, based on the gamesList parameter, which is a plain JavaScript object of game names pointing to their Table2Game constructor options.
+Creates a `<select>` element after the table, containing names of games to choose from, based on the `gamesList` parameter, which is a plain JavaScript object of game names pointing to their Table2Game constructor options.
 
 Again, this section is still being updated. There are a few more methods that need to be included.
 
 ## Demo Games
 
-These are games built into the engine for use and for code examples. Pass any of these strings into the Table2Game constructor (and a second argument for the options, to point to your table) and you can play the game.
+These are games built into the engine for use and for code examples. Pass any of these strings into the Table2Game constructor (and a second argument for the options, including a `table` key pointing to your table) and you can play the game.
 
 "Ping Pong"
 
