@@ -297,7 +297,7 @@
 				onkeydownCallback = opts.onkeydown;
 			} else {
 				onkeydownCallback = opts.onkeydown;
-				handleElmEvent(window, "keydown", function(e) { onkeydownCallback.call(self, e); }, false);
+				handleElmEvent(window, "keydown", function(e) { e.preventDefault(); onkeydownCallback.call(self, e); }, false);
 				handlersCreated.onkeydown = true;
 			}
 		} else {
@@ -312,7 +312,7 @@
 				onkeyupCallback = opts.onkeyup;
 			} else {
 				onkeyupCallback = opts.onkeyup;
-				handleElmEvent(window, "keyup", function(e) { onkeyupCallback.call(self, e); }, false);
+				handleElmEvent(window, "keyup", function(e) { e.preventDefault(); onkeyupCallback.call(self, e); }, false);
 				handlersCreated.onkeyup = true;
 			}
 		} else {
@@ -327,7 +327,7 @@
 				onkeypressCallback = opts.onkeypress;
 			} else {
 				onkeypressCallback = opts.onkeypress;
-				handleElmEvent(window, "keypress", function(e) { onkeypressCallback.call(self, e); }, false);
+				handleElmEvent(window, "keypress", function(e) { e.preventDefault(); onkeypressCallback.call(self, e); }, false);
 				handlersCreated.onkeypress = true;
 			}
 		} else {
@@ -1538,9 +1538,7 @@
 
 	demoGamesOpts["Ping Pong"].delay = 100;
 
-	demoGamesOpts["Ping Pong"].onkeydown = function(e) {
-		e.preventDefault();
-		
+	demoGamesOpts["Ping Pong"].onkeydown = function(e) {		
 		var paddle = this.getSprites("rightPaddle");
 		
 		switch(e.keyCode) {
