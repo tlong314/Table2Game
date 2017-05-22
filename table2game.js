@@ -1,6 +1,6 @@
 /**
- * @overview A JavaScript game engine for turning any HTML table into a playable game.
- * @author Tim Scott Long
+ * @overview A JavaScript game engine that turns any HTML table into a playable game.
+ * @author Tim Scott Long (tim@timlongcreative.com)
  * @copyright Tim Scott Long 2017
  * @license Available for use under the MIT License
  */
@@ -147,7 +147,7 @@
 		} else {
 			return element.addEventListener(evtString, callback, bubbling);
 		}
-	}; // End handleElmEvent()
+	}; 
 
 	/**
 	 * @description Removes cross-browser event listener. Paramaters are same used in handleElmEvent
@@ -164,7 +164,7 @@
 		} else {
 			return element.removeEventListener(evtString, callback, bubbling);
 		}
-	}; // End unhandleElmEvent()
+	}; 
 
 	/**
 	 * @description Constructor function for Table2Game objects.
@@ -612,7 +612,7 @@
 		}, opts.initialDelay || 20);
 
 		return self;
-	}; // End Table2Game() constructor
+	}; 
 
 	Table2Game.prototype.constructor = Table2Game;
 
@@ -637,7 +637,7 @@
 				updateCallback.call(self);
 				self.paint();
 			}
-	}; // End updateForTimer()
+	}; 
 
 	/**
 	 * @desciption
@@ -657,7 +657,7 @@
 		}, time);
 		
 		return this;
-	}; // End Table2Game.prototype.setTimeout()
+	}; 
 
 	/**
 	 * @description Gets the current number of milliseconds between game updates.
@@ -665,7 +665,7 @@
 	 */
 	Table2Game.prototype.getDelay = function() {
 		return delay;
-	}; // End Table2Game.prototype.getDelay()
+	}; 
 
 	/**
 	 * @description Sets the wait time between game updates.
@@ -677,7 +677,7 @@
 		delay = newDelay;
 		timer = setInterval(updateForTimer, delay);
 		return this;
-	}; // End Table2Game.prototype.setDelay()
+	}; 
 
 	/**
 	 * @description Constructor for a basic visible object to be used in the game.
@@ -749,7 +749,7 @@
 				}
 			}
 		};
-	}; // End Sprite() constructor
+	}; 
 
 	/**
 	 * @description Adds a Sprite object to the current game.
@@ -772,7 +772,7 @@
 		}
 		
 		return this;
-	}; // End Table2Game.prototype.registerSprites
+	}; 
 
 	/**
 	 * @description Removes a Sprite object from the current game.
@@ -797,7 +797,7 @@
 		}
 
 		return this;
-	}; // End Table2Game.prototype.unregisterSprite()
+	}; 
 
 	/**
 	 * @description Get the current list of Sprites, or a particular subset by name.
@@ -824,7 +824,7 @@
 		} else {
 			return sprites;
 		}
-	}; // End Table2Game.prototype.getSprites()
+	}; 
 
 	/**
 	 * @description Adds a `global` variable object to the current game.
@@ -842,7 +842,7 @@
 		}
 
 		return this;
-	}; // End Table2Game.prototype.registerGlobals()
+	}; 
 
 	/**
 	 * @description Removes a `global` object from the current game.
@@ -857,7 +857,7 @@
 		} else {
 			delete globals[name];
 		}
-	}; // Table2Game.prototype.unregisterGlobals()
+	};
 
 	/**
 	 * @description Get the current list of globals, or a particular subset by name.
@@ -884,7 +884,7 @@
 		} else {
 			return globals;
 		}
-	}; // End Table2Game.prototype.getGlobals()
+	}; 
 
 	/**
 	 * @description Updates the value of a given `global` variable in the current game.
@@ -902,7 +902,7 @@
 		}
 
 		return this;
-	}; // End Table2Game.prototype.setGlobals()
+	}; 
 
 	// Gets the HTML table being used in the current Table2Game instance.
 	Table2Game.prototype.getTable = function() {
@@ -925,7 +925,7 @@
 			return { style: {color: "", backgroundColor: ""} };
 		else 
 			return tableArr[y][x];
-	}; // End Table2Game.prototype.getCellAt()
+	}; 
 
 	/**
 	 * @description Determines if two objects are colliding on the game screen.
@@ -955,7 +955,7 @@
 		}
 
 		return false;
-	}; // End Table2Game.prototype.colliding()
+	}; 
 
 	/**
 	 * @description Determines if two Sprites are colliding in their polygon objects.
@@ -986,7 +986,7 @@
 		
 		// Other option, allowing multiple sizes, would be to have a double loop, checking colliding() for each polygon item
 		return false;
-	}; // End Table2Game.prototype.collidingPolygons()
+	}; 
 
 	/**
 	 * @description Determines if an object is colliding into another object from left.
@@ -1000,7 +1000,7 @@
 		}	else {
 			return this.colliding(obj1.x + 1, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height);
 		}
-	}; // End Table2Game.prototype.collidingFromLeft()
+	}; 
 
 	/**
 	 * @description Determines if an object is colliding into another object from right.
@@ -1014,7 +1014,7 @@
 		} else {
 			return this.colliding(obj1.x - 1, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height);
 		}
-	}; // End Table2Game.prototype.collidingFromRight()
+	}; 
 
 	/**
 	 * @description Determines if an object is colliding into another object from above.
@@ -1042,7 +1042,7 @@
 		} else {
 			return this.colliding(obj1.x, obj1.y - 1, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height);
 		}
-	}; // End Table2Game.prototype.collidingFromBelow()
+	}; 
 
 	/**
 	 * @description Determines whether two objects are colliding from any side.
@@ -1106,7 +1106,7 @@
 		} else {
 			return (this.collidingFromAbove(obj1, obj2) || this.collidingFromBelow(obj1, obj2) || this.collidingFromLeft(obj1, obj2) || this.collidingFromRight(obj1, obj2));
 		}
-	}; // End Table2Game.prototype.touching()
+	}; 
 
 	/**
 	 * @description Erases the current game screen.
@@ -1120,7 +1120,7 @@
 		}
 
 		return this;
-	}; // End Table2Game.prototype.clear()
+	}; 
 
 	/**
 	 * @description Draws a rectangular shape to the screen.
@@ -1155,7 +1155,7 @@
 		}
 		
 		return this;
-	}; // Table2Game.prototype.fillRect()
+	};
 
 	/**
 	 * @description Draws a polygon (a Sprite's polygon array) to the game screen.
@@ -1167,7 +1167,7 @@
 		}
 		
 		return this;
-	}; // End Table2Game.prototype.fillPolygon()
+	}; 
 	
 	/**
 	 * @description Draws the current game screen frame.
@@ -1189,7 +1189,7 @@
 		this.onpaint();
 
 		return this;
-	}; // End Table2Game.prototype.paint()
+	}; 
 
 	/**
 	 * @description Pauses the current running game.
@@ -1224,7 +1224,7 @@
 		timer = setInterval(updateForTimer, delay);
 		
 		return this;
-	}; // End Table2Game.prototype.unpause()
+	}; 
 	
 	// Checks if game is currently paused.
 	Table2Game.prototype.isPaused = function() {
@@ -1263,7 +1263,7 @@
 		} else {
 			return this.details[detail];
 		}
-	}; // Table2Game.prototype.getDetails()
+	};
 	
 	/**
 	 * @description Sets the value of a specific detail, internally and on the scoreboard.
@@ -1282,7 +1282,7 @@
 		}
 		
 		return this;
-	}; // End Table2Game.prototype.setDetails()
+	}; 
 
 	/**
 	 * @description Gets the HTML <span> element aligned to a specific detail, or the element hosting the full collection.
@@ -1295,7 +1295,7 @@
 		} else {
 			return this.detailsDiv;
 		}
-	}; // End getDetailsElement()
+	}; 
 
 	/**
 	 * @description Gets the closest <td> or <th> ancestor element of an mouse event target.
@@ -1330,7 +1330,7 @@
 		} else {
 			return null;
 		}
-	}; // End Table2Game.prototype.closestCell()
+	}; 
 
 	/**
 	 * @description Gets the x-y coordinates of a table cell on the game screen.
@@ -1351,7 +1351,7 @@
 		}
 
 		return -1;
-	}; // End Table2Game.prototype.getCellCoords()
+	}; 
 
 	/**
 	 * @description Attempt to reposition a sprite so that it's the last thing drawn to the screen.
@@ -1371,7 +1371,7 @@
 		}
 
 		return this.unregisterSprite(spriteName).registerSprites(spriteName, storedSpriteVals);
-	}; // End Table2Game.prototype.moveToTop()
+	}; 
 
 	/**
 	 * @description Creates a basic flashing effect, usually indicating a collision or a game end.
@@ -1408,7 +1408,7 @@
 				callback.call(self);
 			}
 		}, totalFlashTime);
-	} // End Table2Game.prototype.flashEnding()
+	} 
 
 	///////////////////////////////////////////////////
 
@@ -1855,7 +1855,7 @@
 				this.unregisterSprite(name);
 				this.setDetails("Score", this.getDetails("Score") + 100);
 
-				// End game when all blocks have been deleted
+				
 				if(Object.keys(this.getSprites(/block/)).length === 0) {
 					this.unregisterSprite("ball");
 					//*** this.setDelay(40);
@@ -2421,7 +2421,7 @@
 				Table2GameObj.unregisterSprite(pb.name);
 			}
 		};
-	} // End PlayerBullet() constructor
+	} 
 
 	///////////////////////////////////////////////////
 	/* Jumper  */
@@ -3266,7 +3266,7 @@
 				}
 			}
 		}
-	}; // End demoGamesOpts["Dungeon"].onkeydown()
+	}; 
 
 	demoGamesOpts["Dungeon"].onkeyup = function(e) {
 		switch(e.keyCode) {
@@ -3922,7 +3922,7 @@
 				}
 			}
 		}
-	}; // End demoGamesOpts["Dungeon"].update
+	}; 
 
 	function resetDungeon() {
 		var player = this.getSprites("player");
@@ -4045,7 +4045,7 @@
 		}, totalFlashTime + 4000);
 	}
 
-	// End of built-in demos
+	
 
 	/**
 	 * @description Add a <select> element below the Table2Game table with a list of games to choose from.
@@ -4092,7 +4092,7 @@
 		self.table.parentNode.insertBefore(select, self.table.nextSibling);
 
 		return this;
-	}; // End Table2Game.prototype.addGamesList()
+	}; 
 
 	/**
 	 * @description Returns the first ancestory of the given element that is a <table> element.
@@ -4105,7 +4105,7 @@
 		}
 
 		return elm;
-	}; // End Table2Game.closestTable()
+	}; 
 
 	/**
 	 * @description Creates handlers allowing user to decide which table to use by clicking on it.
@@ -4114,7 +4114,7 @@
 		var tables = document.getElementsByTagName("table");
 
 		handleElmEvent(window, "click", createTableOnClick, false);
-	}; // End Table2Game.clickToChoose()
+	}; 
 
 	/**
 	 * @description Creates a Table2Game object from a clicked table.
@@ -4131,7 +4131,7 @@
 			tableFound = true;
 			unhandleElmEvent(window, "click", createTableOnClick, false);
 		}
-	}; // End createTableOnClick()
+	}; 
 
 	// Expose the Table2Game constructor and static variables.
 	return Table2Game;
