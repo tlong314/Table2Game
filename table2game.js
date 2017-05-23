@@ -135,83 +135,84 @@
 
 	/**
 	 * @description Binds cross-browser event listener.
-	 * @param {Object} element The HTML element the event will be handled for.
-	 * @param {string} evtString The standard name of the event
-	 * @param {function} callback The handler function to be called.
-	 * @param {boolean} bubbling Whether or not the event should bubble.
+	 * @param {Object} element - The HTML element the event will be handled for.
+	 * @param {string} evtString - The standard name of the event
+	 * @param {function} callback - The handler function to be called.
+	 * @param {boolean} useCapture - The standard `useCapture` parameter for EventTarget.addEventListener.
 	 * @private
 	 */
-	var handleElmEvent = function(element, evtString, callback, bubbling) {
+	var handleElmEvent = function(element, evtString, callback, useCapture) {
 		if(window.attachEvent) {
 			return element.attachEvent(evtString, callback);
 		} else {
-			return element.addEventListener(evtString, callback, bubbling);
+			return element.addEventListener(evtString, callback, useCapture);
 		}
 	}; 
 
 	/**
 	 * @description Removes cross-browser event listener. Paramaters are same used in handleElmEvent
 	 *   to bind the listener.
-	 * @param {Object} element The HTML element the event will be handled for.
-	 * @param {string} evtString The standard name of the event
-	 * @param {function} callback The handler function to be called.
-	 * @param {boolean} bubbling Whether or not the event should bubble.
+	 * @param {Object} element - The HTML element the event will be handled for.
+	 * @param {string} evtString - The standard name of the event
+	 * @param {function} callback - The handler function to be called.
+	 * @param {boolean} useCapture - The standard `useCapture` parameter for EventTarget.addEventListener.
 	 * @private
 	 */
-	var unhandleElmEvent = function(element, evtString, callback, bubbling) {
+	var unhandleElmEvent = function(element, evtString, callback, useCapture) {
 		if(window.detachEvent) {
 			return element.detachEvent(evtString, callback);
 		} else {
-			return element.removeEventListener(evtString, callback, bubbling);
+			return element.removeEventListener(evtString, callback, useCapture);
 		}
 	}; 
 
 	/**
-	 * @description Constructor function for Table2Game objects.
-	 * @param {Object|string} opts Options for the created Table2Game, or the name of an existing demo game.
-	 * @param {Object} [opts.table] The HTML <table> element to be used as the game canvas. Defaults to first table drawn on page.
-	 * @param {Object} [opts.globals] A plain JavaScript object with keys as names for `global` variables in the game, with values as their initial values.
-	 * @param {Object} [opts.sprites] A plain JavaScript object with keys as names for Sprites in the game, with values as their constructor options.
-	 * @param {Object} [opts.details] A plain JavaScript object with keys as names of values to be displayed on the scoreboard, and values as their initial values.
-	 * @param {function} [opts.init] The function to be called before beginning the game. Used for general initialization tasks.
-	 * @param {function} [opts.update] The primary function to be called during setInterval updates.
-	 * @param {function} [opts.onpause] A callback to be called when the current game is paused (this is called after game is hidden, but before timer is cleared).
-	 * @param {function} [opts.onunpause] A callback to be called before the current game is unpaused.
-	 * @param {function} [onpaint] A callback to be called after each time the game screen is redrawn.
-	 * @param {number} [opts.delay] The number of milliseconds to wait before each game update.
-	 * @param {boolean} [opts.hideOnPause] Whether the game screen should be cleared when the game is paused. Defaults to true.
-	 * @param {number} [opts.initialDelay] Time in milliseconds to wait before first screen paint (e.g., title screen) and game start.
-	 * @param {string} [opts.defaultColor] The default color to use for drawing Sprites.
-	 * @param {string} [opts.white] A color to be used for the lightest objects.
-	 * @param {string} [opts.black] A color to be used for the darkest objects.
-	 * @param {string} [opts.gray] A color to be used for gray tones.
-	 * @param {string} [opts.red] A color to be used for red tones.
-	 * @param {string} [opts.green] A color to be used for green tones.
-	 * @param {string} [opts.blue] A color to be used for blue tones.
-	 * @param {string} [opts.yellow] A color to be used for yellow tones.
-	 * @param {string} [opts.purple] A color to be used for purple tones.
-	 * @param {string} [opts.blueGreen] A color to be used for blueGreen tones.
-	 * @param {Object} [demoOptsOverrides] Similar properties to the opts parameter, available when requesting an existing demo game.
+	 * @description Constructor function for Table2Game object instances.
+	 * @param {Object|string} opts - Options for the created Table2Game, or the name of an existing demo game.
+	 * @param {Object} [opts.table] - The HTML <table> element to be used as the game canvas. Defaults to first table drawn on page.
+	 * @param {Object} [opts.globals] - A plain JavaScript object with keys as names for `global` variables in the game, with values as their initial values.
+	 * @param {Object} [opts.sprites] - A plain JavaScript object with keys as names for Sprites in the game, with values as their constructor options.
+	 * @param {Object} [opts.details] - A plain JavaScript object with keys as names of values to be displayed on the scoreboard, and values as their initial values.
+	 * @param {function} [opts.init] - The function to be called before beginning the game. Used for general initialization tasks.
+	 * @param {function} [opts.update] - The primary function to be called during setInterval updates.
+	 * @param {function} [opts.onpause] - A callback to be called when the current game is paused (this is called after game is hidden, but before timer is cleared).
+	 * @param {function} [opts.onunpause] - A callback to be called before the current game is unpaused.
+	 * @param {function} [onpaint] - A callback to be called after each time the game screen is redrawn.
+	 * @param {number} [opts.delay] - The number of milliseconds to wait before each game update.
+	 * @param {boolean} [opts.hideOnPause] - Whether the game screen should be cleared when the game is paused. Defaults to true.
+	 * @param {number} [opts.initialDelay] - Time in milliseconds to wait before first screen paint (e.g., title screen) and game start.
+	 * @param {string} [opts.defaultColor] - The default color to use for drawing Sprites.
+	 * @param {string} [opts.white] - A color to be used for the lightest objects.
+	 * @param {string} [opts.black] - A color to be used for the darkest objects.
+	 * @param {string} [opts.gray] - A color to be used for gray tones.
+	 * @param {string} [opts.red] - A color to be used for red tones.
+	 * @param {string} [opts.green] - A color to be used for green tones.
+	 * @param {string} [opts.blue] - A color to be used for blue tones.
+	 * @param {string} [opts.yellow] - A color to be used for yellow tones.
+	 * @param {string} [opts.purple] - A color to be used for purple tones.
+	 * @param {string} [opts.blueGreen] - A color to be used for blueGreen tones.
+	 * @param {Object} [demoOptsOverrides] - Similar properties to the opts parameter, available when requesting an existing demo game.
 	 * @returns {Object} The created Table2Game object.
 	 */
 	var Table2Game = function(opts, demoOptsOverrides) {
 		if(this === window) {
-			return new Table2Game(opts);
+			return new Table2Game(opts, demoOptsOverrides);
 		}
 
 		opts = opts || {};
 
-		// Passing just a demo game's name will create that game.
+		// Passing just a demo game's name into the constructor will create that game.
 		if(typeof opts === "string") {
 			if(typeof demoOptsOverrides !== "undefined") {
-				for(var prop in demoOptsOverrides) {
-					demoGamesOpts[opts][prop] = demoOptsOverrides[prop]; // Override demo game's default property
-				}
 
-				return new Table2Game(demoGamesOpts[opts], demoOptsOverrides);
-			} else {
-				return new Table2Game(demoGamesOpts[opts]);
-			}			
+				 // Passing a game's name and some custom properties into the constructor
+				 // allows you to override the demo game's default properties.
+				for(var prop in demoOptsOverrides) {
+					demoGamesOpts[opts][prop] = demoOptsOverrides[prop];
+				}
+			}
+
+			return new Table2Game(demoGamesOpts[opts]);
 		}
 
 		var defaults = {
@@ -230,6 +231,8 @@
 			width = 1,
 			height = 1,
 			detailsDiv = null;
+
+		console.log("defaults.table ", defaults.table);
 
 		// Reset globals
 		self = undefined;
@@ -265,6 +268,8 @@
 
 		self.table = table;
 
+		console.log("self.table is ", table);
+		
 		for(var glob in opts.globals) {
 			self.registerGlobals(glob, opts.globals[glob]);
 		}
@@ -645,7 +650,7 @@
 	 * Emulates a standard window.setTimeout call, while halting current game processes.
 	 * Used for instance, to allow time to note that a life has just been lost.
 	 *
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.setTimeout = function(callback , time) {
 		delayedTime = time;
@@ -669,8 +674,8 @@
 
 	/**
 	 * @description Sets the wait time between game updates.
-	 * @param {number} newDelay The new number of milliseconds to wait between game updates.
-	 * @returns {Object} The current Table2Game object.
+	 * @param {number} newDelay - The new number of milliseconds to wait between game updates.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.setDelay = function(newDelay) {
 		clearInterval(timer);
@@ -681,17 +686,17 @@
 
 	/**
 	 * @description Constructor for a basic visible object to be used in the game.
-	 * @param {Object} opts Options to be used to define the Sprite object.
+	 * @param {Object} opts - Options to be used to define the Sprite object.
 	 * @param {string} opts.name - A name to be used to identify this object in the game.
-	 * @param {number} [x] The object's initial x-position onscreen.
-	 * @param {number} [y] The object's initial y-position onscreen.
-	 * @param {number} [velocityX] The object's initial horizontal velocity. Used by dev in update() callback.
-	 * @param {number} [velocityY] The object's initial vertical velocity. Used by dev in update() callback.
-	 * @param {number} [width] The number of cells wide that the object should be drawn.
-	 * @param {number} [height] The number of cells high that the object should be drawn.
-	 * @param {string} [color] The color to draw the Sprite's cells.
-	 * @param {Object[]} [polygon] An array of Sprites making up the entire Sprite object's
-	 *   shape. If this array is nonempty, then values for x, y, velocityX, velocityY, width, and height above are ignored.
+	 * @param {number} [x] - The object's initial x-position onscreen.
+	 * @param {number} [y] - The object's initial y-position onscreen.
+	 * @param {number} [velocityX] - The object's initial horizontal velocity. Used by dev in update() callback.
+	 * @param {number} [velocityY] - The object's initial vertical velocity. Used by dev in update() callback.
+	 * @param {number} [width] - The number of cells wide that the object should be drawn.
+	 * @param {number} [height] - The number of cells high that the object should be drawn.
+	 * @param {string} [color] - The color to draw the Sprite's cells.
+	 * @param {Object[]} [polygon] - An array of Sprites making up the entire Sprite object's shape. If
+	 *   this array is nonempty, then values for x, y, velocityX, velocityY, width, and height above are ignored.
 	 * @private
 	 */
 	var Sprite = function(opts) {
@@ -722,9 +727,9 @@
 
 		/**
 		 * @description Resets values of objects within the Sprite object's polygon array.
-		 * @param {string} key The name of the object property being updated.
-		 * @param {string} valShift The new value for the `key` parameter, or a value to be added/appended to it.
-		 * @param {boolean} replaceVal If true, valShift replaces the original value rather than adding/appending to it.
+		 * @param {string} key - The name of the object property being updated.
+		 * @param {string} valShift - The new value for the `key` parameter, or a value to be added/appended to it.
+		 * @param {boolean} replaceVal - If true, valShift replaces the original value rather than adding/appending to it.
 		 */
 		self.shiftPolygons = function(key, valShift, replaceVal) {
 			if(replaceVal) {
@@ -753,10 +758,10 @@
 
 	/**
 	 * @description Adds a Sprite object to the current game.
-	 * @param {string|Object} nameOrObj The name of the Sprite object being added, or a
+	 * @param {string|Object} nameOrObj - The name of the Sprite object being added, or a
 	 *   plain JavaScript object defining multiple Sprite objects to add - keys represent the new
 	 *   Sprite object names and values represent the constructor options for the Sprite objects themselves.
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.registerSprites = function(nameOrObj, opts) {
 		if(typeof nameOrObj === "string") {
@@ -776,8 +781,8 @@
 
 	/**
 	 * @description Removes a Sprite object from the current game.
-	 * @param {string|Object} nameOrSprite The Sprite object or name of the Sprite object being removed (accepts any number of arguments).
-	 * @returns {Object} The current Table2Game object.
+	 * @param {string|Object} nameOrSprite - The Sprite object or name of the Sprite object being removed (accepts any number of arguments).
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.unregisterSprite = function(nameOrSprite) {
 		if(arguments.length > 1) {
@@ -801,7 +806,7 @@
 
 	/**
 	 * @description Get the current list of Sprites, or a particular subset by name.
-	 * @param {string|Object} name The string name of the variable being checked, or a
+	 * @param {string|Object} name - The string name of the variable being checked, or a
 	 *   regular expression matching names of sprites to be returned.
 	 * @returns {*} May be be a single value defined by the name parameter, or an object containing all
 	 *   of the sprites (as name-Sprite pairs) whose name match the regular expression defined in `name`.
@@ -827,10 +832,10 @@
 	}; 
 
 	/**
-	 * @description Adds a `global` variable object to the current game.
-	 * @param {string|Object} nameOrObj The name of the global object being added, or a plain JavaScript object with
+	 * @description Adds a "global" variable object to the current game.
+	 * @param {string|Object} nameOrObj - The name of the global object being added, or a plain JavaScript object with
 	 *   keys that are names for the new globals and values that are values for the new globals.
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.registerGlobals = function(nameOrObj, val) {
 		if(typeof nameOrObj === "string") {
@@ -845,9 +850,9 @@
 	}; 
 
 	/**
-	 * @description Removes a `global` object from the current game.
-	 * @param {string} name The name of the `global` object being removed (accepts any nonzero number of arguments).
-	 * @returns {Object} The current Table2Game object.
+	 * @description Removes a "global" object from the current game.
+	 * @param {string} name - The name of the `global` object being removed (accepts any nonzero number of arguments).
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.unregisterGlobals = function(name) {
 		if(arguments.length > 1) {
@@ -861,7 +866,7 @@
 
 	/**
 	 * @description Get the current list of globals, or a particular subset by name.
-	 * @param {string|Object} name The string name of the variable being checked, or a
+	 * @param {string|Object} name - The string name of the variable being checked, or a
 	 *   regular expression matching names of global variables to be returned.
 	 * @returns {*} May be be a single value defined by the name parameter, or an object containing all
 	 *   of the globals (as name-global pairs) whose name match the regular expression defined in `name`.
@@ -888,9 +893,9 @@
 
 	/**
 	 * @description Updates the value of a given `global` variable in the current game.
-	 * @param {string|Object} nameOrObj The name of the global variable.
-	 * @param {*} val The value that the given global is being set to.
-	 * @returns {Object} The current Table2Game object.
+	 * @param {string|Object} nameOrObj - The name of the global variable.
+	 * @param {*} val - The value that the given global is being set to.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.setGlobals = function(nameOrObj, val) {
 		if(typeof nameOrObj === "string") {
@@ -916,8 +921,8 @@
 
 	/**
 	 * @description Gets an HTML table cell for given coordinates in the current Table2Game object's table.
-	 * @param {number} x The x coordinate (in the game screen) of the cell.
-	 * @param {number} y The y coordinate (in the game screen) of the cell.
+	 * @param {number} x - The x coordinate (in the game screen) of the cell.
+	 * @param {number} y - The y coordinate (in the game screen) of the cell.
 	 * @returns {Object} The <td> or <th> cell at the given coordinates.
 	 */
 	Table2Game.prototype.getCellAt = function(x, y) {
@@ -929,8 +934,8 @@
 
 	/**
 	 * @description Determines if two objects are colliding on the game screen.
-	 * @param {Object} obj1 A (Sprite or Sprite-like) object being checked for collision with obj2.
-	 * @param {Object} obj2 A (Sprite or Sprite-like) object being checked for collision with obj1.
+	 * @param {Object} obj1 - A (Sprite or Sprite-like) object being checked for collision with obj2.
+	 * @param {Object} obj2 - A (Sprite or Sprite-like) object being checked for collision with obj1.
 	 * @returns {boolean}
 	 */
 	Table2Game.prototype.colliding = function(x1, y1, w1, h1, x2, y2, w2, h2) {		
@@ -990,8 +995,8 @@
 
 	/**
 	 * @description Determines if an object is colliding into another object from left.
-	 * @param {Object} obj1 A (Sprite or Sprite-like) object being checked for collision with obj2.
-	 * @param {Object} obj2 A (Sprite or Sprite-like) object being checked for collision with obj1.
+	 * @param {Object} obj1 - A (Sprite or Sprite-like) object being checked for collision with obj2.
+	 * @param {Object} obj2 - A (Sprite or Sprite-like) object being checked for collision with obj1.
 	 * @returns {boolean}
 	 */
 	Table2Game.prototype.collidingFromLeft = function(obj1, obj2) {
@@ -1004,8 +1009,8 @@
 
 	/**
 	 * @description Determines if an object is colliding into another object from right.
-	 * @param {Object} obj1 A (Sprite or Sprite-like) object being checked for collision with obj2.
-	 * @param {Object} obj2 A (Sprite or Sprite-like) object being checked for collision with obj1.
+	 * @param {Object} obj1 - A (Sprite or Sprite-like) object being checked for collision with obj2.
+	 * @param {Object} obj2 - A (Sprite or Sprite-like) object being checked for collision with obj1.
 	 * @returns {boolean}
 	 */
 	Table2Game.prototype.collidingFromRight = function(obj1, obj2) {
@@ -1018,8 +1023,8 @@
 
 	/**
 	 * @description Determines if an object is colliding into another object from above.
-	 * @param {Object} obj1 A (Sprite or Sprite-like) object being checked for collision with obj2.
-	 * @param {Object} obj2 A (Sprite or Sprite-like) object being checked for collision with obj1.
+	 * @param {Object} obj1 - A (Sprite or Sprite-like) object being checked for collision with obj2.
+	 * @param {Object} obj2 - A (Sprite or Sprite-like) object being checked for collision with obj1.
 	 * @returns {boolean}
 	 */
 	Table2Game.prototype.collidingFromAbove = function(obj1, obj2) {
@@ -1032,8 +1037,8 @@
 
 	/**
 	 * @description Determines if an object is colliding into another object from below.
-	 * @param {Object} obj1 A (Sprite or Sprite-like) object being checked for collision with obj2.
-	 * @param {Object} obj2 A (Sprite or Sprite-like) object being checked for collision with obj1.
+	 * @param {Object} obj1 - A (Sprite or Sprite-like) object being checked for collision with obj2.
+	 * @param {Object} obj2 - A (Sprite or Sprite-like) object being checked for collision with obj1.
 	 * @returns {boolean}
 	 */
 	Table2Game.prototype.collidingFromBelow = function(obj1, obj2) {
@@ -1046,9 +1051,9 @@
 
 	/**
 	 * @description Determines whether two objects are colliding from any side.
-	 * @param {Object} obj1 A (Sprite or Sprite-like) object being checked for collision with obj2.
-	 * @param {Object} obj2 A (Sprite or Sprite-like) object being checked for collision with obj1.
-	 * @param {boolean} includeCorners Whether or not to include corners in the check (rather than just sides, top, and bottom).
+	 * @param {Object} obj1 - A (Sprite or Sprite-like) object being checked for collision with obj2.
+	 * @param {Object} obj2 - A (Sprite or Sprite-like) object being checked for collision with obj1.
+	 * @param {boolean} includeCorners - Whether or not to include corners in the check (rather than just sides, top, and bottom).
 	 * @returns {boolean}
 	 */
 	Table2Game.prototype.touching = function(obj1, obj2, includeCorners) {
@@ -1124,12 +1129,12 @@
 
 	/**
 	 * @description Draws a rectangular shape to the screen.
-	 * @param {number} x The x value of the top-left corner of the rectangle.
-	 * @param {number} y The y value of the top-left corner of the rectangle.
-	 * @param {number} width The number of cells in the overall shape's width.
-	 * @param {number} height The number of cells in the overall shape's height.
-	 * @param {string} [color] The color to draw the table cells in this shape.
-	 * @returns {Object} The current Table2Game object.
+	 * @param {number} x - The x value of the top-left corner of the rectangle.
+	 * @param {number} y - The y value of the top-left corner of the rectangle.
+	 * @param {number} width - The number of cells in the overall shape's width.
+	 * @param {number} height - The number of cells in the overall shape's height.
+	 * @param {string} [color] - The color to draw the table cells in this shape.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.fillRect = function(x, y, width, height, color) {
 		color = color || defaultColor;
@@ -1159,7 +1164,7 @@
 
 	/**
 	 * @description Draws a polygon (a Sprite's polygon array) to the game screen.
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.fillPolygon = function(polygon, color) {
 		for(var i = 0, len = polygon.length; i < len; i++) {
@@ -1171,7 +1176,7 @@
 	
 	/**
 	 * @description Draws the current game screen frame.
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.paint = function() {
 		this.clear();
@@ -1193,7 +1198,7 @@
 
 	/**
 	 * @description Pauses the current running game.
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.pause = function() {		
 		if(hideOnPause) {
@@ -1211,7 +1216,7 @@
 
 	/**
 	 * @description Unpauses the current running game.
-	 * @returns {Object} The current Table2Game object.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.unpause = function() {
 		this.onunpause();
@@ -1248,7 +1253,7 @@
 
 	/**
 	 * @description Gets the value of a detail (scoreboard) item.
-	 * @param {string} detail The name of the detail whose value is being requested.
+	 * @param {string} detail - The name of the detail whose value is being requested.
 	 * @returns {*}
 	 */
 	Table2Game.prototype.getDetails = function(detail) {
@@ -1267,8 +1272,8 @@
 	
 	/**
 	 * @description Sets the value of a specific detail, internally and on the scoreboard.
-	 * @param {string} detail The name of the detail to be updated.
-	 * @param {*} val The new value of the detail. Typecast to a string when posted on scoreboard.
+	 * @param {string} detail - The name of the detail to be updated.
+	 * @param {*} val - The new value of the detail. Typecast to a string when posted on scoreboard.
 	 */
 	Table2Game.prototype.setDetails = function(detail, val) {
 		if(typeof detail === "object") {
@@ -1286,7 +1291,7 @@
 
 	/**
 	 * @description Gets the HTML <span> element aligned to a specific detail, or the element hosting the full collection.
-	 * @param detail The name of the specific detail. If none is provided, the entire details <div> element is returned.
+	 * @param detail - The name of the specific detail. If none is provided, the entire details <div> element is returned.
 	 * @returns {Object}
 	 */
 	Table2Game.prototype.getDetailsElement = function(detail) {
@@ -1299,7 +1304,7 @@
 
 	/**
 	 * @description Gets the closest <td> or <th> ancestor element of an mouse event target.
-	 * @param {Object} target The target element of the event.
+	 * @param {Object} target - The target element of the event.
 	 * @returns {Object|null} Returns null of no ancestors are of the form <td> or <th>.
 	 */
 	Table2Game.prototype.closestCell = function(target) {
@@ -1334,7 +1339,7 @@
 
 	/**
 	 * @description Gets the x-y coordinates of a table cell on the game screen.
-	 * @param {Object} cell The HTML <td> or <th> element being checked.
+	 * @param {Object} cell - The HTML <td> or <th> element being checked.
 	 * @returns {Object|number} If the given cell exists in the current stored data, returns an object
 	 *   with keys x and y, pointing respectively to the x and y values for this cell. Otherwise returns -1.
 	 */
@@ -1355,8 +1360,8 @@
 
 	/**
 	 * @description Attempt to reposition a sprite so that it's the last thing drawn to the screen.
-	 * @param {string} spriteName The stored name of the sprite to be moved.
-	 * @returns {Object} The current Table2Game object.
+	 * @param {string} spriteName - The stored name of the sprite to be moved.
+	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.moveToTop = function(spriteName) {
 		var sprite = this.getSprites(spriteName),
@@ -1375,9 +1380,9 @@
 
 	/**
 	 * @description Creates a basic flashing effect, usually indicating a collision or a game end.
-	 * @param {number} numFlashes The total number of flashes to be shown in this animation.
-	 * @param {number} delayStep The wait in milliseconds between each flash.
-	 * @param {function} callback A function to be implemented after the flashes complete.
+	 * @param {number} numFlashes - The total number of flashes to be shown in this animation.
+	 * @param {number} delayStep - The wait in milliseconds between each flash.
+	 * @param {function} callback - A function to be implemented after the flashes complete.
 	 */
 	Table2Game.prototype.flashEnding = function(numFlashes, delayStep, callback) {
 		var index = 0,
@@ -4045,13 +4050,15 @@
 		}, totalFlashTime + 4000);
 	}
 
-	
-
 	/**
-	 * @description Add a <select> element below the Table2Game table with a list of games to choose from.
-	 * @param {Object} gamesList A plain JavaScript object with keys representing game names,
+	 * End of built-in demos.
+	 */
+	
+	/**
+	 * @description Adds a <select> element below the Table2Game table with a list of games to choose from.
+	 * @param {Object} gamesList - A plain JavaScript object with keys representing game names,
 	 *   and values representing the respective options.
-	 * @returns {Object} The currrent Table2Game object.
+	 * @returns {Object} The currrent Table2Game instance.
 	 */
 	Table2Game.prototype.addGamesList = function(gamesList) {
 		var gamesList = gamesList || {},
@@ -4068,7 +4075,7 @@
 		option.value = "0";
 		select.appendChild(option);
 
-		for(var game in gamesList) {	
+		for(var game in gamesList) {
 			option = document.createElement("option");
 			text = document.createTextNode(game);
 
@@ -4079,9 +4086,11 @@
 
 		select.onchange = function(e) {
 			self.pause();
-
+			
 			if(this.value !== "0") {
+				gamesList[ this.value ].table = self.table;
 				currentTable2Game = new Table2Game( gamesList[ this.value ] );
+
 				this.parentNode.removeChild(this); // Remove games list
 			}
 		};
@@ -4096,8 +4105,9 @@
 
 	/**
 	 * @description Returns the first ancestory of the given element that is a <table> element.
-	 * @param {Object} elm The HTML element being changed.
+	 * @param {Object} elm - The HTML element being changed.
 	 * @returns {Object} The found table or null if no ancestor is a table.
+	 * @static
 	 */
 	Table2Game.closestTable = function(elm) {
 		while(elm && elm.nodeName !== "TABLE") {
@@ -4118,7 +4128,7 @@
 
 	/**
 	 * @description Creates a Table2Game object from a clicked table.
-	 * @param {Object} e The click event that triggered the callback.
+	 * @param {Object} e - The click event that triggered the callback.
 	 * @private
 	 */
 	var createTableOnClick = function(e) {
