@@ -1,6 +1,6 @@
 /**
  * @overview A JavaScript game engine that turns any HTML table into a playable game.
- * @author Tim Scott Long (tim@timlongcreative.com)
+ * @author Tim Scott Long <tim@timlongcreative.com>
  * @copyright Tim Scott Long 2017
  * @license Available for use under the MIT License
  */
@@ -613,7 +613,7 @@
 
 		// Optionally, wait before beginning animation - gives user time to adjust.
 		setTimeout(function() {
-			timer = setInterval(updateForTimer, delay);
+			timer = setTimeout(updateForTimer, this.delay);
 		}, opts.initialDelay || 20);
 
 		return self;
@@ -637,11 +637,13 @@
 	 * @private
 	 */
 	var updateForTimer = function() {
-			if(!paused && !delayedTime) {
-				gameTime++;
-				updateCallback.call(self);
-				self.paint();
-			}
+		if(!paused && !delayedTime) {
+			gameTime++;
+			updateCallback.call(self);
+			self.paint();
+			
+			setTimeout(updateForTimer, self.delay);
+		}
 	}; 
 
 	/**
@@ -678,9 +680,9 @@
 	 * @returns {Object} The current Table2Game instance.
 	 */
 	Table2Game.prototype.setDelay = function(newDelay) {
-		clearInterval(timer);
+		clearTimeout(timer);
 		delay = newDelay;
-		timer = setInterval(updateForTimer, delay);
+		timer = setTimeout(updateForTimer, delay);
 		return this;
 	}; 
 
@@ -1209,7 +1211,7 @@
 		this.onpause();
 
 		paused = true;
-		clearInterval(timer);
+		clearTimeout(timer);
 
 		return this;
 	}; // Table2Game.prototype.pause()
@@ -1222,11 +1224,9 @@
 		this.onunpause();
 		paused = false;
 
-		if(this.detailsDiv.style.display = "none") {
-			this.detailsDiv.style.display = "inline block";
-		}
+		this.detailsDiv.style.display = "inline block";
 
-		timer = setInterval(updateForTimer, delay);
+		timer = setTimeout(updateForTimer, delay);
 		
 		return this;
 	}; 
@@ -2566,7 +2566,6 @@
 				147: {y: 1, height: topStart + 2},
 				148: {y: 2, height: topStart + 2},
 				149: {y: 3, height: topStart + 1},
-				//148: {height: 1},
 				160: {height: 1},
 				164: {height: 2},
 				170: {height: 3},
@@ -2586,9 +2585,12 @@
 		}
 		
 		this.flashEndingPosition = 0; // Reseting this value allows us to restart/replay the game immediately
-		this.setGlobals("walls", walls)
-			.setGlobals("timeCount", 0)
-			.setGlobals("awaitingReset", false);
+		this.setGlobals({
+				"walls": walls,
+				"timeCount": 0,
+				"awaitingReset": false
+			})
+			.setDetails("Score", 0);
 
 		player.x = 2;
 		player.y = this.screenHeight - 2;
