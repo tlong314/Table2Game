@@ -1,5 +1,5 @@
 /**
- * @overview A JavaScript game engine that turns any HTML table into a playable game.
+ * @overview A JavaScript game engine for turning any HTML table into a playable game.
  * @author Tim Scott Long <tim@timlongcreative.com>
  * @copyright Tim Scott Long 2017
  * @license Available for use under the MIT License
@@ -90,8 +90,8 @@
 		green = "#f1fff1",
 		blue = "#f1f1ff",
 		
-		yellow = "#fffff1",
-		
+		yellow = "#ffffe3",
+
 		blueGreen = "#f1ffff",
 		purple = "#fff1ff",
 		
@@ -140,14 +140,14 @@
 	 * @param {function} callback - The handler function to be called.
 	 * @param {boolean} useCapture - The standard `useCapture` parameter for EventTarget.addEventListener.
 	 * @private
-	 */
+	 */ 
 	var handleElmEvent = function(element, evtString, callback, useCapture) {
 		if(window.attachEvent) {
-			return element.attachEvent(evtString, callback);
+			element.attachEvent(evtString, callback);
 		} else {
-			return element.addEventListener(evtString, callback, useCapture);
+			element.addEventListener(evtString, callback, useCapture);
 		}
-	}; 
+	};
 
 	/**
 	 * @description Removes cross-browser event listener. Paramaters are same used in handleElmEvent
@@ -160,11 +160,11 @@
 	 */
 	var unhandleElmEvent = function(element, evtString, callback, useCapture) {
 		if(window.detachEvent) {
-			return element.detachEvent(evtString, callback);
+			element.detachEvent(evtString, callback);
 		} else {
-			return element.removeEventListener(evtString, callback, useCapture);
+			element.removeEventListener(evtString, callback, useCapture);
 		}
-	}; 
+	};
 
 	/**
 	 * @description Constructor function for Table2Game object instances.
@@ -232,8 +232,6 @@
 			height = 1,
 			detailsDiv = null;
 
-		console.log("defaults.table ", defaults.table);
-
 		// Reset globals
 		self = undefined;
 		table = undefined;
@@ -267,8 +265,6 @@
 		}
 
 		self.table = table;
-
-		console.log("self.table is ", table);
 		
 		for(var glob in opts.globals) {
 			self.registerGlobals(glob, opts.globals[glob]);
@@ -559,7 +555,7 @@
 
 		delay = opts.delay || delay;
 		self.delay = delay;
-		self.flashEndingPosition = 0; 
+		self.flashEndingPosition = 0;
 
 		self.defaultColor = opts.defaultColor || opts.gray || defaultColor;
 		self.white = opts.white || white;
@@ -609,7 +605,7 @@
 		onpaintCallback = opts.onpaint;
 
 		opts.init.call(self); // Call init() function immediately
-		self.paint(); // Draw intro screen immediately after init()
+		self.paint(); // Draw intro screen immediately after init(), before applying initialDelay
 
 		// Optionally, wait before beginning animation - gives user time to adjust.
 		setTimeout(function() {
@@ -617,7 +613,7 @@
 		}, opts.initialDelay || 20);
 
 		return self;
-	}; 
+	};
 
 	Table2Game.prototype.constructor = Table2Game;
 
@@ -641,10 +637,10 @@
 			gameTime++;
 			updateCallback.call(self);
 			self.paint();
-			
+
 			setTimeout(updateForTimer, self.delay);
 		}
-	}; 
+	};
 
 	/**
 	 * @desciption
@@ -661,10 +657,12 @@
 			delayedTime = 0;
 
 			callback.call(self);
+
+			updateForTimer(); // Restart the game updates
 		}, time);
-		
+
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Gets the current number of milliseconds between game updates.
@@ -672,7 +670,7 @@
 	 */
 	Table2Game.prototype.getDelay = function() {
 		return delay;
-	}; 
+	};
 
 	/**
 	 * @description Sets the wait time between game updates.
@@ -684,7 +682,7 @@
 		delay = newDelay;
 		timer = setTimeout(updateForTimer, delay);
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Constructor for a basic visible object to be used in the game.
@@ -756,7 +754,7 @@
 				}
 			}
 		};
-	}; 
+	};
 
 	/**
 	 * @description Adds a Sprite object to the current game.
@@ -779,7 +777,7 @@
 		}
 		
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Removes a Sprite object from the current game.
@@ -804,7 +802,7 @@
 		}
 
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Get the current list of Sprites, or a particular subset by name.
@@ -831,7 +829,7 @@
 		} else {
 			return sprites;
 		}
-	}; 
+	};
 
 	/**
 	 * @description Adds a "global" variable object to the current game.
@@ -849,7 +847,7 @@
 		}
 
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Removes a "global" object from the current game.
@@ -891,7 +889,7 @@
 		} else {
 			return globals;
 		}
-	}; 
+	};
 
 	/**
 	 * @description Updates the value of a given `global` variable in the current game.
@@ -909,7 +907,7 @@
 		}
 
 		return this;
-	}; 
+	};
 
 	// Gets the HTML table being used in the current Table2Game instance.
 	Table2Game.prototype.getTable = function() {
@@ -928,11 +926,11 @@
 	 * @returns {Object} The <td> or <th> cell at the given coordinates.
 	 */
 	Table2Game.prototype.getCellAt = function(x, y) {
-		if(x < 0 || y < 0 || x > screenWidth || y > screenHeight)
-			return { style: {color: "", backgroundColor: ""} };
-		else 
+		if(x < 0 || y < 0 || x > screenWidth || y > screenHeight || !tableArr[y][x])
+			return { style: {color: "", backgroundColor: "", "border-left": "", "border-top": ""} };
+		else
 			return tableArr[y][x];
-	}; 
+	};
 
 	/**
 	 * @description Determines if two objects are colliding on the game screen.
@@ -962,7 +960,7 @@
 		}
 
 		return false;
-	}; 
+	};
 
 	/**
 	 * @description Determines if two Sprites are colliding in their polygon objects.
@@ -993,7 +991,7 @@
 		
 		// Other option, allowing multiple sizes, would be to have a double loop, checking colliding() for each polygon item
 		return false;
-	}; 
+	};
 
 	/**
 	 * @description Determines if an object is colliding into another object from left.
@@ -1007,7 +1005,7 @@
 		}	else {
 			return this.colliding(obj1.x + 1, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height);
 		}
-	}; 
+	};
 
 	/**
 	 * @description Determines if an object is colliding into another object from right.
@@ -1021,7 +1019,7 @@
 		} else {
 			return this.colliding(obj1.x - 1, obj1.y, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height);
 		}
-	}; 
+	};
 
 	/**
 	 * @description Determines if an object is colliding into another object from above.
@@ -1049,7 +1047,7 @@
 		} else {
 			return this.colliding(obj1.x, obj1.y - 1, obj1.width, obj1.height, obj2.x, obj2.y, obj2.width, obj2.height);
 		}
-	}; 
+	};
 
 	/**
 	 * @description Determines whether two objects are colliding from any side.
@@ -1066,7 +1064,7 @@
 		
 		if(includeCorners) {
 			var fromBL = { // To see if obj1 is hitting obj2's bottom left corner, check if this obj1 is colliding this object from bottom
-				x: obj2.x - 1, 
+				x: obj2.x - 1,
 				y: obj2.y,
 				width: obj2.width,
 				height: obj2.height,
@@ -1074,7 +1072,7 @@
 				velocityY: 0
 			},
 			fromBR = { //... if this is colliding from bottom
-				x: obj2.x + 1, 
+				x: obj2.x + 1,
 				y: obj2.y,
 				width: obj2.width,
 				height: obj2.height,
@@ -1090,7 +1088,7 @@
 				velocityY: 0
 			},
 			fromTR = { // if this is colliding from top
-				x: obj2.x + 1, 
+				x: obj2.x + 1,
 				y: obj2.y,
 				width: obj2.width,
 				height: obj2.height,
@@ -1113,7 +1111,7 @@
 		} else {
 			return (this.collidingFromAbove(obj1, obj2) || this.collidingFromBelow(obj1, obj2) || this.collidingFromLeft(obj1, obj2) || this.collidingFromRight(obj1, obj2));
 		}
-	}; 
+	};
 
 	/**
 	 * @description Erases the current game screen.
@@ -1127,7 +1125,7 @@
 		}
 
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Draws a rectangular shape to the screen.
@@ -1174,7 +1172,7 @@
 		}
 		
 		return this;
-	}; 
+	};
 	
 	/**
 	 * @description Draws the current game screen frame.
@@ -1196,7 +1194,7 @@
 		this.onpaint();
 
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Pauses the current running game.
@@ -1224,12 +1222,12 @@
 		this.onunpause();
 		paused = false;
 
-		this.detailsDiv.style.display = "inline block";
+		this.detailsDiv.style.display = "inline-block";
 
 		timer = setTimeout(updateForTimer, delay);
 		
 		return this;
-	}; 
+	};
 	
 	// Checks if game is currently paused.
 	Table2Game.prototype.isPaused = function() {
@@ -1260,7 +1258,8 @@
 		if(typeof detail === "undefined") {
 			var detailsObj = {};
 
-			for(var d in details) {
+			 // Return a clone of the internal object rather than passing the object reference
+			for(var d in this.details) {
 				detailsObj[d] = this.details[d];
 			}
 
@@ -1287,7 +1286,7 @@
 		}
 		
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Gets the HTML <span> element aligned to a specific detail, or the element hosting the full collection.
@@ -1300,7 +1299,7 @@
 		} else {
 			return this.detailsDiv;
 		}
-	}; 
+	};
 
 	/**
 	 * @description Gets the closest <td> or <th> ancestor element of an mouse event target.
@@ -1335,7 +1334,7 @@
 		} else {
 			return null;
 		}
-	}; 
+	};
 
 	/**
 	 * @description Gets the x-y coordinates of a table cell on the game screen.
@@ -1356,7 +1355,7 @@
 		}
 
 		return -1;
-	}; 
+	};
 
 	/**
 	 * @description Attempt to reposition a sprite so that it's the last thing drawn to the screen.
@@ -1376,7 +1375,7 @@
 		}
 
 		return this.unregisterSprite(spriteName).registerSprites(spriteName, storedSpriteVals);
-	}; 
+	};
 
 	/**
 	 * @description Creates a basic flashing effect, usually indicating a collision or a game end.
@@ -1413,7 +1412,7 @@
 				callback.call(self);
 			}
 		}, totalFlashTime);
-	} 
+	};
 
 	///////////////////////////////////////////////////
 
@@ -1437,7 +1436,7 @@
 		Lives: 3
 	};
 
-	demoGamesOpts["Ping Pong"].update = function() {
+	demoGamesOpts["Ping Pong"].update = function() {		
 		var ball = this.getSprites("ball"),
 			leftPaddle = this.getSprites("leftPaddle"),
 			rightPaddle = this.getSprites("rightPaddle"),
@@ -1496,7 +1495,7 @@
 				self.setTimeout(function() {
 					ball.x = Math.floor(self.screenWidth / 2);
 					self.paint();
-								
+		
 					self.setTimeout(function() {					
 						ball.color = "#eee";
 					}, 500);
@@ -1520,18 +1519,18 @@
 			}
 		}
 
-		// If you create helper functions, it's usually a good idea to pass the current `this` Table2Game reference with .call()
+		// Note to devs: if you create helper functions, it's usually a good idea to pass the current `this` Table2Game reference with .call()
 		updateAIPaddle.call(self, ball, leftPaddle);
 	};
 
-	updateAIPaddle = function(ball, leftPaddle) {
+	var updateAIPaddle = function(ball, leftPaddle) {
 
 		// Remember to make the AI a little stupid...
 		if(Math.random() * 10 < 5) {
 			return;
 		}
 
-		// Computer AI	
+		// Computer AI
 		if(leftPaddle.y + 1 < ball.y) {
 			if(leftPaddle.y + leftPaddle.height < this.screenHeight)
 				leftPaddle.y++;
@@ -1542,7 +1541,8 @@
 	};
 
 	demoGamesOpts["Ping Pong"].delay = 100;
-
+	demoGamesOpts["Ping Pong"].initialDelay = 1000;
+	
 	demoGamesOpts["Ping Pong"].onkeydown = function(e) {		
 		var paddle = this.getSprites("rightPaddle");
 		
@@ -1622,7 +1622,7 @@
 			return;
 		}
 		
-		var	lastX = snake.polygon[snake.polygon.length - 1].x,
+		var lastX = snake.polygon[snake.polygon.length - 1].x,
 			lastY = snake.polygon[snake.polygon.length - 1].y,
 			idx = 0;
 
@@ -2075,12 +2075,12 @@
 			x: 0,
 			y: 0,
 			width: 3,
-			height: 1	
+			height: 1
 		}).registerSprites("wall2", {
 			x: 6,
 			y: 0,
 			width: 1,
-			height: 1	
+			height: 1
 		}).registerSprites("wall3", {
 			x: 1,
 			y: 2,
@@ -2095,12 +2095,12 @@
 			x: 4,
 			y: 1,
 			width: 1,
-			height: 4	
+			height: 4
 		}).registerSprites("wall6", {
 			x: 0,
 			y: 4,
 			width: 3,
-			height: 1	
+			height: 1
 		}).registerSprites("wall7", {
 			x: 5,
 			y: 2,
@@ -2110,7 +2110,7 @@
 			x: 9,
 			y: 0,
 			width: 1,
-			height: this.screenHeight	
+			height: this.screenHeight
 		}).registerSprites("wall9", {
 			x: 0,
 			y: 6,
@@ -2334,6 +2334,7 @@
 			if(this.colliding(playerBullets[name], centipede)) {
 				centipede.polygon.pop();
 				this.unregisterSprite(playerBullets[name].name);
+				this.setDetails("Score", this.getDetails("Score") + 100);
 			}
 		}
 		
@@ -2426,7 +2427,7 @@
 				Table2GameObj.unregisterSprite(pb.name);
 			}
 		};
-	} 
+	}
 
 	///////////////////////////////////////////////////
 	/* Jumper  */
@@ -2911,7 +2912,7 @@
 				break;
 			default:{
 			
-			}	
+			}
 		}
 	};
 
@@ -3273,7 +3274,7 @@
 				}
 			}
 		}
-	}; 
+	};
 
 	demoGamesOpts["Dungeon"].onkeyup = function(e) {
 		switch(e.keyCode) {
@@ -3772,7 +3773,7 @@
 			} else if(roomTimeCount % 40 < 20) {
 				enemy0.x = Math.floor(this.screenWidth / 2) - 1;
 				enemy0.y = Math.floor(this.screenHeight / 2) + 1;
-				enemy1.x = Math.floor(this.screenWidth / 2) - 2;
+				enemy1.x = Math.max( Math.floor(this.screenWidth / 2) - 2, 1);
 				enemy1.y = Math.floor(this.screenHeight / 2) - 1;
 			} else if(roomTimeCount % 40 < 30) {
 				enemy0.x = 1;
@@ -3780,12 +3781,12 @@
 				enemy1.x = this.screenWidth - 2;
 				enemy1.y = this.screenHeight - 2;
 			} else {
-				enemy0.x = Math.floor(this.screenWidth / 3) - 1;
+				enemy0.x = Math.max( Math.floor(this.screenWidth / 3) - 1, 1);
 				enemy0.y = 2 * Math.floor(this.screenHeight / 2) - 1;
 				enemy1.x = this.screenWidth - 2;
 				enemy1.y = Math.floor(this.screenHeight / 2) - 1;
 			}
-			
+
 			if(roomTimeCount % 10 > 6) {
 				enemy0.x = -1;
 				enemy0.y = -1;
@@ -3796,7 +3797,7 @@
 			var enemy0 = this.getSprites("enemy0"),
 				enemy1 = this.getSprites("enemy1"),
 				spot = roomTimeCount % (2 * (this.screenWidth - 2));
-			
+
 			if(spot < this.screenWidth - 2) {
 				enemy0.x = this.screenWidth - 1 - (1 + spot);
 				enemy1.x = 1 + spot;
@@ -3862,7 +3863,7 @@
 			while(idx-- > 1) {
 				centipede.polygon[idx].x = centipede.polygon[idx - 1].x;
 				centipede.polygon[idx].y = centipede.polygon[idx - 1].y;
-			} 
+			}
 
 			if(centipede.velocityX > 0) { // going right		
 				if(centipede.polygon[0].x + centipede.velocityX < this.screenWidth - 1) {
@@ -3929,7 +3930,7 @@
 				}
 			}
 		}
-	}; 
+	};
 
 	function resetDungeon() {
 		var player = this.getSprites("player");
@@ -4069,6 +4070,8 @@
 			text = document.createTextNode("- Select - "),
 			self = this;
 
+		self.pause(); // We do not want the current timer running, or else they will double up.
+
 		if(!gamesList || !Object.keys(gamesList).length) {
 			gamesList = demoGamesOpts;
 		}
@@ -4086,9 +4089,7 @@
 			select.appendChild(option);
 		}
 
-		select.onchange = function(e) {
-			self.pause();
-			
+		select.onchange = function(e) {			
 			if(this.value !== "0") {
 				gamesList[ this.value ].table = self.table;
 				currentTable2Game = new Table2Game( gamesList[ this.value ] );
@@ -4103,7 +4104,7 @@
 		self.table.parentNode.insertBefore(select, self.table.nextSibling);
 
 		return this;
-	}; 
+	};
 
 	/**
 	 * @description Returns the first ancestory of the given element that is a <table> element.
@@ -4117,16 +4118,17 @@
 		}
 
 		return elm;
-	}; 
+	};
 
 	/**
 	 * @description Creates handlers allowing user to decide which table to use by clicking on it.
+	 * @static
 	 */
 	Table2Game.clickToChoose = function() {
 		var tables = document.getElementsByTagName("table");
 
 		handleElmEvent(window, "click", createTableOnClick, false);
-	}; 
+	};
 
 	/**
 	 * @description Creates a Table2Game object from a clicked table.
@@ -4143,7 +4145,7 @@
 			tableFound = true;
 			unhandleElmEvent(window, "click", createTableOnClick, false);
 		}
-	}; 
+	};
 
 	// Expose the Table2Game constructor and static variables.
 	return Table2Game;
